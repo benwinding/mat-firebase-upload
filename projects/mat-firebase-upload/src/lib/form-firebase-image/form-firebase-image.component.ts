@@ -18,7 +18,7 @@ import { FormBase } from '../form-base-class';
 import { TrimSlashes } from '../utils/path-helpers';
 import { NotificationService } from '../utils/notification.service';
 
-export interface FormImageFirebaseConfiguration {
+export interface FormFirebaseImageConfiguration {
   directory: string;
   bucketname?: string;
   firebaseConfig: {};
@@ -28,7 +28,7 @@ export interface FormImageFirebaseConfiguration {
 
 @Component({
   // tslint:disable-next-line: component-selector
-  selector: 'form-image-firebase',
+  selector: 'form-firebase-image',
   template: `
     <div class="container">
       <span class="placeholder">{{ placeholder }}</span>
@@ -113,22 +113,22 @@ export interface FormImageFirebaseConfiguration {
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => FormImageFirebaseComponent),
+      useExisting: forwardRef(() => FormFirebaseImageComponent),
       multi: true
     },
     {
       provide: NG_VALIDATORS,
-      useExisting: forwardRef(() => FormImageFirebaseComponent),
+      useExisting: forwardRef(() => FormFirebaseImageComponent),
       multi: true
     }
   ]
 })
-export class FormImageFirebaseComponent extends FormBase<FormFileObject>
+export class FormFirebaseImageComponent extends FormBase<FormFileObject>
   implements OnInit, OnDestroy {
   @Input()
   placeholder = 'upload here';
   @Input()
-  config: FormImageFirebaseConfiguration = {} as any;
+  config: FormFirebaseImageConfiguration = {} as any;
   // tslint:disable-next-line: no-output-on-prefix
   @Output()
   uploadStatusChanged = new EventEmitter<boolean>();

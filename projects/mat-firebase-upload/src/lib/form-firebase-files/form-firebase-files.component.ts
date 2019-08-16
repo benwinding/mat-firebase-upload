@@ -18,10 +18,11 @@ import { FormBase } from '../form-base-class';
 import { TrimSlashes } from '../utils/path-helpers';
 import { NotificationService } from '../utils/notification.service';
 
-export interface FormFilesFirebaseConfiguration {
+export interface FormFirebaseFilesConfiguration {
   directory: string;
   bucketname?: string;
-  firebaseConfig: {};
+  firebaseConfig?: {};
+  firebaseApp?: firebase.app.App;
   maxFiles?: number;
   imageCompressionQuality?: number;
   imageCompressionMaxSize?: number;
@@ -30,7 +31,7 @@ export interface FormFilesFirebaseConfiguration {
 
 @Component({
   // tslint:disable-next-line: component-selector
-  selector: 'form-file-firebase',
+  selector: 'form-firebase-files',
   template: `
     <div>
       <label
@@ -55,18 +56,23 @@ export interface FormFilesFirebaseConfiguration {
           [disabled]="disabled || maxReached"
           (change)="onFileInputChange($event)"
         />
+        <span *ngIf="isConfigLoaded">
         {{ placeholder }}
+        </span>
+        <span *ngIf="!isConfigLoaded">
+          [config] is waiting for variable config: FormFirebaseFilesConfiguration to resolve
+        </span>
         <div class="max-files" *ngIf="maxReached && !disabled">
           Max Uploaded - Limit of {{ config.maxFiles }} file(s) reached. Remove
           files to change uploads
         </div>
       </label>
-      <app-uploaded-files-list
+      <lib-uploaded-files-list
         [disabled]="disabled"
         [uploadedFiles]="this.value"
         (clickRemoveTag)="this.clickRemoveTag($event)"
       >
-      </app-uploaded-files-list>
+      </lib-uploaded-files-list>
     </div>
   `,
   styles: [
@@ -97,22 +103,33 @@ export interface FormFilesFirebaseConfiguration {
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => FormFileFirebaseComponent),
+      useExisting: forwardRef(() => ForFirebaseFilesComponent),
       multi: true
     },
     {
       provide: NG_VALIDATORS,
-      useExisting: forwardRef(() => FormFileFirebaseComponent),
+      useExisting: forwardRef(() => ForFirebaseFilesComponent),
       multi: true
     }
   ]
 })
-export class FormFileFirebaseComponent extends FormBase<FormFileObject[]>
+export class ForFirebaseFilesComponent extends FormBase<FormFileObject[]>
   implements OnInit, OnDestroy {
   @Input()
   placeholder = 'upload here';
+
+  private _config: FormFirebaseFilesConfiguration;
   @Input()
-  config: FormFilesFirebaseConfiguration = {} as any;
+  set config(config: FormFirebaseFilesConfiguration) {
+    this._config = config || {} as any;
+    this.initFirebase();
+  }
+  get config() {
+    return this._config;
+  }
+  get isConfigLoaded(): boolean {
+    return !!this.config && !!this.config.firebaseConfig;
+  }
   // tslint:disable-next-line: no-output-on-prefix
   @Output()
   uploadStatusChanged = new EventEmitter<boolean>();
@@ -134,11 +151,13 @@ export class FormFileFirebaseComponent extends FormBase<FormFileObject[]>
   }
 
   ngOnInit() {
-    let app;
-    if (firebase.apps.length) {
-      app = firebase.apps[0];
-    } else {
-      app = firebase.initializeApp(this.config.firebaseConfig);
+
+  }
+
+  initFirebase() {
+    const app = this.getFirebaseApp(this.config);
+    if (!app) {
+      return;
     }
     this.storage = app.storage(this.currentBucketName());
     timer(0, 1000)
@@ -146,6 +165,21 @@ export class FormFileFirebaseComponent extends FormBase<FormFileObject[]>
       .subscribe(() => {
         this.checkAllUploadsAreDone();
       });
+  }
+
+  getFirebaseApp(config: FormFirebaseFilesConfiguration): firebase.app.App {
+    if (config.firebaseApp) {
+      return config.firebaseApp;
+    }
+    if (!config.firebaseConfig) {
+      return null;
+    }
+    const firebaseConfig = this.config.firebaseConfig;
+    if (firebase.apps.length) {
+      return firebase.apps[0];
+    } else {
+      return firebase.initializeApp(firebaseConfig);
+    }
   }
 
   ngOnDestroy() {
