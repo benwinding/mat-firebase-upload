@@ -114,6 +114,10 @@ export class FormFileUploadedFileListComponent {
   }
 
   clickedImage(imageurl: string) {
-    this.dialog.open(PreviewImagePopupComponent, { data: imageurl });
+    this.dialog.open(PreviewImagePopupComponent, {
+      data: imageurl,
+      hasBackdrop: true,
+      disableClose: false
+    });
   }
 }
