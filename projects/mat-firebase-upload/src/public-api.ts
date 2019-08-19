@@ -3,3 +3,5 @@
  */
 
 export * from './lib/lib.module';
+export * from './lib/form-firebase-files/form-firebase-files.component';
+export * from './lib/form-firebase-image/form-firebase-image.component';
