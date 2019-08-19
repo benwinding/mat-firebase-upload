@@ -17,12 +17,17 @@ import { getFileIcon, isFileImage } from '../utils/file-icon.helper';
 import { FormBase } from '../form-base-class';
 import { TrimSlashes } from '../utils/path-helpers';
 import { NotificationService } from '../utils/notification.service';
-import { dataURItoBlob, blobToDataURL, downscaleImage } from '../utils/img-helpers';
+import {
+  dataURItoBlob,
+  blobToDataURL,
+  downscaleImage
+} from '../utils/img-helpers';
 
 export interface FormFirebaseImageConfiguration {
   directory: string;
   bucketname?: string;
   firebaseConfig: {};
+  firebaseApp: firebase.app.App;
   imageCompressionQuality?: number;
   imageCompressionMaxSize?: number;
 }
@@ -128,8 +133,20 @@ export class FormFirebaseImageComponent extends FormBase<FormFileObject>
   implements OnInit, OnDestroy {
   @Input()
   placeholder = 'upload here';
+  private _config: FormFirebaseImageConfiguration;
   @Input()
-  config: FormFirebaseImageConfiguration = {} as any;
+  set config(config: FormFirebaseImageConfiguration) {
+    this._config = config || ({} as any);
+    this.initFirebase();
+  }
+  get config() {
+    return this._config;
+  }
+  get isConfigLoaded(): boolean {
+    const c = this.config;
+    return !!c && !!c.directory && (!!c.firebaseApp || !!c.firebaseConfig);
+  }
+
   // tslint:disable-next-line: no-output-on-prefix
   @Output()
   uploadStatusChanged = new EventEmitter<boolean>();
@@ -147,12 +164,15 @@ export class FormFirebaseImageComponent extends FormBase<FormFileObject>
     this.value = value;
   }
 
-  ngOnInit() {
-    let app;
-    if (firebase.apps.length) {
-      app = firebase.apps[0];
-    } else {
-      app = firebase.initializeApp(this.config.firebaseConfig);
+  ngOnInit() {}
+  ngOnDestroy() {
+    this.destroyed.next();
+  }
+
+  initFirebase() {
+    const app = this.getFirebaseApp(this.config);
+    if (!app) {
+      return;
     }
     this.storage = app.storage(this.currentBucketName());
     timer(0, 1000)
@@ -162,8 +182,19 @@ export class FormFirebaseImageComponent extends FormBase<FormFileObject>
       });
   }
 
-  ngOnDestroy() {
-    this.destroyed.next();
+  getFirebaseApp(config: FormFirebaseImageConfiguration): firebase.app.App {
+    if (config.firebaseApp) {
+      return config.firebaseApp;
+    }
+    if (!config.firebaseConfig) {
+      return null;
+    }
+    const firebaseConfig = this.config.firebaseConfig;
+    if (firebase.apps.length) {
+      return firebase.apps[0];
+    } else {
+      return firebase.initializeApp(firebaseConfig);
+    }
   }
 
   checkAllUploadsAreDone() {

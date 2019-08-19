@@ -17,7 +17,11 @@ import { getFileIcon, isFileImage } from '../utils/file-icon.helper';
 import { FormBase } from '../form-base-class';
 import { TrimSlashes } from '../utils/path-helpers';
 import { NotificationService } from '../utils/notification.service';
-import { dataURItoBlob, blobToDataURL, downscaleImage } from '../utils/img-helpers';
+import {
+  dataURItoBlob,
+  blobToDataURL,
+  downscaleImage
+} from '../utils/img-helpers';
 
 export interface FormFirebaseFilesConfiguration {
   directory: string;
@@ -58,10 +62,11 @@ export interface FormFirebaseFilesConfiguration {
           (change)="onFileInputChange($event)"
         />
         <span *ngIf="isConfigLoaded">
-        {{ placeholder }}
+          {{ placeholder }}
         </span>
         <span *ngIf="!isConfigLoaded">
-          [config] is waiting for variable config: FormFirebaseFilesConfiguration to resolve
+          [config] is waiting for variable config:
+          FormFirebaseFilesConfiguration to resolve
         </span>
         <div class="max-files" *ngIf="maxReached && !disabled">
           Max Uploaded - Limit of {{ config.maxFiles }} file(s) reached. Remove
@@ -122,14 +127,15 @@ export class ForFirebaseFilesComponent extends FormBase<FormFileObject[]>
   private _config: FormFirebaseFilesConfiguration;
   @Input()
   set config(config: FormFirebaseFilesConfiguration) {
-    this._config = config || {} as any;
+    this._config = config || ({} as any);
     this.initFirebase();
   }
   get config() {
     return this._config;
   }
   get isConfigLoaded(): boolean {
-    return !!this.config && !!this.config.firebaseConfig;
+    const c = this.config;
+    return !!c && !!c.directory && (!!c.firebaseApp || !!c.firebaseConfig);
   }
   // tslint:disable-next-line: no-output-on-prefix
   @Output()
@@ -151,8 +157,9 @@ export class ForFirebaseFilesComponent extends FormBase<FormFileObject[]>
     this.value = value;
   }
 
-  ngOnInit() {
-
+  ngOnInit() {}
+  ngOnDestroy() {
+    this.destroyed.next();
   }
 
   initFirebase() {
@@ -181,10 +188,6 @@ export class ForFirebaseFilesComponent extends FormBase<FormFileObject[]>
     } else {
       return firebase.initializeApp(firebaseConfig);
     }
-  }
-
-  ngOnDestroy() {
-    this.destroyed.next();
   }
 
   checkAllUploadsAreDone() {
