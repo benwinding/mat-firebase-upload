@@ -107,8 +107,9 @@ export class FormFileUploadedFileListComponent {
 
   isDone(file: FormFileObject): boolean {
     if (file && file.value && file.value.props) {
-      const c = file.value.props.completed;
-      return c;
+      const isCompleted =
+        file.value.props.completed || file.value.props.progress === 100;
+      return isCompleted;
     }
     return false;
   }
