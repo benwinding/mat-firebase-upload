@@ -18,7 +18,8 @@ export class AppComponent {
   constructor() {
     this.config = {
       directory: `audits/somelocation`,
-      firebaseConfig: environment.firebaseConfig
+      firebaseConfig: environment.firebaseConfig,
+      useUuidName: true
     };
   }
 }

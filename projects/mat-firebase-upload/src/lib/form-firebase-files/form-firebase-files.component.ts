@@ -22,6 +22,7 @@ import {
   blobToDataURL,
   downscaleImage
 } from '../utils/img-helpers';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface FormFirebaseFilesConfiguration {
   directory: string;
@@ -31,6 +32,7 @@ export interface FormFirebaseFilesConfiguration {
   maxFiles?: number;
   imageCompressionQuality?: number;
   imageCompressionMaxSize?: number;
+  useUuidName?: boolean;
   acceptedFiles?: 'image/*,application/*' | 'image/*';
 }
 
@@ -269,7 +271,7 @@ export class ForFirebaseFilesComponent extends FormBase<FormFileObject[]>
 
   async beginUploadTask(file: File) {
     const bucketPath = 'gs://' + this.currentBucketName();
-    const uniqueFileName = file.name;
+    const uniqueFileName = this.config.useUuidName ? uuidv4() : file.name;
     const originalFileName = file.name;
     const dir = this.config.directory;
     const dirPath = `${TrimSlashes(bucketPath)}/${TrimSlashes(dir)}`;
