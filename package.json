@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --port 4567",
+    "start-local": "ng serve --port 4567 --host 0.0.0.0",
     "build-lib": "ng build --project=mat-firebase-upload",
     "watch-lib": "ng build --project=mat-firebase-upload --watch",
     "build": "ng build",
