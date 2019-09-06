@@ -14,8 +14,13 @@ import { FormFirebaseImageComponent } from './form-firebase-image/form-firebase-
 import { ForFirebaseFilesComponent } from './form-firebase-files/form-firebase-files.component';
 import { FormFileUploadedFileListComponent } from './form-firebase-files/form-file-uploader-list.component';
 import { LibPreviewImagesModule } from './preview-images/lib-preview-images.module';
+import { FormFirebaseFilesViewerComponent } from './form-firebase-files-viewer/form-firebase-files-viewer.component';
 
-const shared = [FormFirebaseImageComponent, ForFirebaseFilesComponent];
+const shared = [
+  FormFirebaseImageComponent,
+  ForFirebaseFilesComponent,
+  FormFirebaseFilesViewerComponent
+];
 
 @NgModule({
   imports: [

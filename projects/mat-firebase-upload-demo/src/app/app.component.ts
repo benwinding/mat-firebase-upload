@@ -6,9 +6,12 @@ import { environment } from '../environments/environment';
 @Component({
   selector: 'app-root',
   template: `
-    <!--The content below is only a placeholder and can be replaced.-->
+    <h2>Uploader/Viewer Control</h2>
     <form-firebase-files [formControl]="controlFiles" [config]="config">
     </form-firebase-files>
+    <h2>Viewer Only</h2>
+    <form-firebase-files-viewer [value]="controlFiles.value">
+    </form-firebase-files-viewer>
   `
 })
 export class AppComponent {
