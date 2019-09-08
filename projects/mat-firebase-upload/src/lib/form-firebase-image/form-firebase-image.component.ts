@@ -26,8 +26,8 @@ import {
 export interface FormFirebaseImageConfiguration {
   directory: string;
   bucketname?: string;
-  firebaseConfig: {};
-  firebaseApp: firebase.app.App;
+  firebaseConfig?: {};
+  firebaseApp?: firebase.app.App;
   imageCompressionQuality?: number;
   imageCompressionMaxSize?: number;
 }
