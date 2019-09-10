@@ -9,8 +9,13 @@ import {
   MatProgressSpinnerModule
 } from '@angular/material';
 import { PreviewImagePopupComponent } from './components/preview-image-popup.component';
+import { LibImgWithLoaderComponent } from './components/img-with-loader.component';
 
-const exportedComponents = [PreviewImageComponent, PreviewGalleryComponent];
+const exportedComponents = [
+  PreviewImageComponent,
+  PreviewGalleryComponent,
+  LibImgWithLoaderComponent
+];
 
 @NgModule({
   entryComponents: [PreviewImagePopupComponent],

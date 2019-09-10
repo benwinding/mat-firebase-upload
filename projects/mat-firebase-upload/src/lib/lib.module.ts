@@ -35,7 +35,7 @@ const shared = [
     MatIconModule,
     LibPreviewImagesModule
   ],
-  exports: [...shared],
+  exports: [...shared, LibPreviewImagesModule],
   declarations: [FormFileUploadedFileListComponent, ...shared],
   providers: [NotificationService]
 })
