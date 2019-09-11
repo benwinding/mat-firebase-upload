@@ -23,6 +23,10 @@ function blankFile(url: string): FormFileObject {
   };
 }
 
+function blankFile2(): FormFileObject {
+  return blankFile('https://i.imgur.com/HSdYMMN.jpg');
+}
+
 @Component({
   selector: 'app-root',
   template: `
@@ -35,17 +39,18 @@ function blankFile(url: string): FormFileObject {
     <h2>Image Uploader/Viewer Control</h2>
     <form-firebase-image [formControl]="controlImage" [config]="config">
     </form-firebase-image>
-    <h5>Value<h5>
-    <pre>
-      {{controlImage.value | json}}
-    </pre>
     <h2>Image Uploader/Viewer Control2</h2>
     <form-firebase-image [formControl]="controlImage2" [config]="config">
     </form-firebase-image>
+    <h5>Value</h5>
+    <pre>
+      {{ controlImage2.value | json }}
+    </pre
+    >
     <h2>Image With Loader</h2>
     <img-with-loader [src]="imgUrl"></img-with-loader>
     <h2>Image Gallery</h2>
-    <app-preview-gallery [imageUrls]="[imgUrl]"> </app-preview-gallery>
+    <preview-gallery [imageUrls]="[imgUrl]"> </preview-gallery>
   `
 })
 export class AppComponent {
@@ -65,5 +70,9 @@ export class AppComponent {
       firebaseConfig: environment.firebaseConfig,
       useUuidName: true
     };
+    this.controlImage2.setValue(null);
+    setTimeout(() => {
+      this.controlImage2.patchValue(blankFile2());
+    }, 1000);
   }
 }

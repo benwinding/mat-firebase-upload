@@ -102,13 +102,6 @@ export interface FormFirebaseImageConfiguration {
       </label>
     </div>
     <pre>
-    {{
-        {
-          hasLoaded: this.hasLoaded,
-          hasError: this.hasError,
-          value: this.value
-        } | json
-      }}
   </pre
     >
   `,

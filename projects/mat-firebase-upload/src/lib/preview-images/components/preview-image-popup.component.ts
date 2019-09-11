@@ -2,7 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
-  selector: 'app-preview-image-popup',
+  selector: 'preview-image-popup',
   template: `
     <div class="relative">
       <button class="absolute z1 btn-close" mat-mini-fab (click)="onCancel()">

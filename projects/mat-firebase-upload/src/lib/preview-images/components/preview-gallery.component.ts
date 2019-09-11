@@ -1,11 +1,11 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-preview-gallery',
+  selector: 'preview-gallery',
   template: `
     <div class="gallery">
       <div class="gallery-item" *ngFor="let url of imageUrls">
-        <app-preview-image [src]="url" [aspectRatio]="1"> </app-preview-image>
+        <preview-image [src]="url" [aspectRatio]="1"> </preview-image>
       </div>
     </div>
   `,

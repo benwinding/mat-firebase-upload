@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material';
 import { PreviewImagePopupComponent } from './preview-image-popup.component';
 
 @Component({
-  selector: 'app-preview-image',
+  selector: 'preview-image',
   template: `
     <div class="outer">
       <div
