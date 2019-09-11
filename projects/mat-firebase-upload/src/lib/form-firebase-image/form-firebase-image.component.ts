@@ -60,7 +60,7 @@ export interface FormFirebaseImageConfiguration {
           class="flex-h max-width justify-around"
           *ngIf="value?.imageurl as imageurl"
         >
-          <div class="full-width" *ngIf="!hasLoaded && !hasError">
+          <div *ngIf="!hasLoaded && !hasError">
             <div class="margin10">
               <mat-progress-spinner [diameter]="90" mode="indeterminate">
               </mat-progress-spinner>
