@@ -35,6 +35,10 @@ function blankFile(url: string): FormFileObject {
     <h2>Image Uploader/Viewer Control</h2>
     <form-firebase-image [formControl]="controlImage" [config]="config">
     </form-firebase-image>
+    <h5>Value<h5>
+    <pre>
+      {{controlImage.value | json}}
+    </pre>
     <h2>Image Uploader/Viewer Control2</h2>
     <form-firebase-image [formControl]="controlImage2" [config]="config">
     </form-firebase-image>

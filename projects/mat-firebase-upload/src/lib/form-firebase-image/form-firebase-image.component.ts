@@ -58,15 +58,15 @@ export interface FormFirebaseImageConfiguration {
         <p class="upload-message">{{ uploadMessage }}</p>
         <div
           class="flex-h max-width justify-around"
-          *ngIf="value?.id as imageurl"
+          *ngIf="value?.imageurl as imageurl"
         >
-          <div class="full-width" *ngIf="!img.hasLoaded && !img.hasError">
+          <div class="full-width" *ngIf="!hasLoaded && !hasError">
             <div class="margin10">
               <mat-progress-spinner [diameter]="90" mode="indeterminate">
               </mat-progress-spinner>
             </div>
           </div>
-          <div class="relative" [hidden]="!img.hasLoaded && !img.hasError">
+          <div class="relative" [hidden]="!hasLoaded && !hasError">
             <button
               mat-mini-fab
               color="secondary"
@@ -84,14 +84,14 @@ export interface FormFirebaseImageConfiguration {
               matTooltip="Click to preview image"
               (click)="onImageClicked($event, imageurl)"
               [src]="imageurl"
-              (load)="img.hasLoaded = true"
-              (error)="img.hasError = true"
+              (load)="hasLoaded = true"
+              (error)="hasError = true"
             />
           </div>
         </div>
         <div
           class="full-width"
-          *ngIf="(this.uploadStatusChanged | async) == true"
+          *ngIf="(this.uploadStatusChanged | async) == true && value"
         >
           <mat-progress-bar
             class="progress"
@@ -101,6 +101,16 @@ export interface FormFirebaseImageConfiguration {
         </div>
       </label>
     </div>
+    <pre>
+    {{
+        {
+          hasLoaded: this.hasLoaded,
+          hasError: this.hasError,
+          value: this.value
+        } | json
+      }}
+  </pre
+    >
   `,
   styles: [
     `
@@ -204,6 +214,9 @@ export class FormFirebaseImageComponent extends FormBase<FormFileObject>
 
   isDraggingOnTop = false;
 
+  hasLoaded = false;
+  hasError = false;
+
   constructor(public ns: NotificationService, private dialog: MatDialog) {
     super();
   }
@@ -276,6 +289,8 @@ export class FormFirebaseImageComponent extends FormBase<FormFileObject>
 
   async clickRemoveTag(fileObject: FormFileObject) {
     this.value = null;
+    this.hasError = false;
+    this.hasLoaded = false;
     if (fileObject.bucket_path) {
       try {
         await this.storage.refFromURL(fileObject.bucket_path).delete();
@@ -314,6 +329,8 @@ export class FormFirebaseImageComponent extends FormBase<FormFileObject>
   }
 
   async beginUploadTask(file: File) {
+    this.hasLoaded = false;
+    this.hasError = false;
     const bucketPath = 'gs://' + this.currentBucketName();
     const uniqueFileName = file.name;
     const originalFileName = file.name;
