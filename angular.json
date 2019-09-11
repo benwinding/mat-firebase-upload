@@ -55,7 +55,12 @@
             "tsConfig": "projects/mat-firebase-upload-demo/tsconfig.app.json",
             "assets": [
               "projects/mat-firebase-upload-demo/src/favicon.ico",
-              "projects/mat-firebase-upload-demo/src/assets"
+              "projects/mat-firebase-upload-demo/src/assets",
+              {
+                "glob": "**/*",
+                "input": "projects/mat-firebase-upload/src/assets/fileicons",
+                "output": "./assets/fileicons"
+              }
             ],
             "styles": [
               "projects/mat-firebase-upload-demo/src/styles.css"
