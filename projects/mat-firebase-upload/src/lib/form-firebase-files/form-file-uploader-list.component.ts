@@ -9,33 +9,43 @@ import { PreviewImagePopupComponent } from '../preview-images/components/preview
     <p *ngIf="uploadedFiles?.length">Uploaded files:</p>
     <div>
       <div *ngFor="let file of uploadedFiles">
-        <div class="full-width flex-h">
-          <mat-icon id="i-done" *ngIf="!disabled && isDone(file)"
-            >done</mat-icon
-          >
-          <img class="file-icon" image [src]="file['fileicon']" />
-          <a
-            class="full-width flex-h has-ellipsis"
-            [href]="file.id"
-            target="_blank"
-          >
-            <span class="has-ellipsis">{{ file.value.name }}</span>
-            <mat-icon class="i-open">open_in_new</mat-icon>
-          </a>
-
-          <img
-            *ngIf="file['imageurl'] as imageurl"
-            class="file-thumb has-pointer"
-            image
-            (click)="clickedImage(imageurl)"
-            [src]="imageurl"
-          />
-          <mat-icon
-            *ngIf="!disabled"
-            class="has-pointer"
-            (click)="this.clickRemoveTag.emit(file)"
-            >cancel</mat-icon
-          >
+        <div class="full-width flex-h justify-between">
+          <div class="flex-h has-ellipsis">
+            <mat-icon *ngIf="!disabled && isDone(file)">done</mat-icon>
+            <a class="flex-h has-ellipsis" [href]="file.id" target="_blank">
+              <img class="file-icon" image [src]="file['fileicon']" />
+              <span class="has-ellipsis">{{ file.value.name }}</span>
+              <mat-icon class="i-open">open_in_new</mat-icon>
+            </a>
+          </div>
+          <div class="flex-h">
+            <div class="flex-h" *ngIf="file['imageurl'] as imageurl">
+              <div
+                class="full-width"
+                *ngIf="!img.hasLoaded && !img.hasError"
+              >
+                <div class="margin10">
+                  <mat-progress-spinner [diameter]="30" mode="indeterminate">
+                  </mat-progress-spinner>
+                </div>
+              </div>
+              <img
+                #img
+                class="file-thumb has-pointer"
+                (click)="clickedImage(imageurl)"
+                [src]="imageurl"
+                [hidden]="!img.hasLoaded && !img.hasError"
+                (load)="img.hasLoaded = true"
+                (error)="img.hasError = true"
+              />
+            </div>
+            <mat-icon
+              *ngIf="!disabled"
+              class="has-pointer"
+              (click)="this.clickRemoveTag.emit(file)"
+              >cancel</mat-icon
+            >
+          </div>
         </div>
         <div class="full-width">
           <mat-progress-bar
@@ -57,6 +67,9 @@ import { PreviewImagePopupComponent } from '../preview-images/components/preview
         flex-direction: row;
         align-items: center;
       }
+      .justify-between {
+        justify-content: space-between;
+      }
       .has-pointer {
         cursor: pointer;
       }
@@ -66,8 +79,9 @@ import { PreviewImagePopupComponent } from '../preview-images/components/preview
       }
       .file-thumb,
       .file-icon {
-        margin: 0px 10px;
+        margin: 3px;
         height: 30px;
+        width: auto;
       }
       .file-thumb {
         background-color: #ddd;
@@ -93,6 +107,14 @@ export class FormFileUploadedFileListComponent {
 
   constructor(private dialog: MatDialog) {}
 
+  clickedImage(imageurl: string) {
+    this.dialog.open(PreviewImagePopupComponent, {
+      data: imageurl,
+      hasBackdrop: true,
+      disableClose: false
+    });
+  }
+
   getProgress(file: FormFileObject) {
     const isDone = this.isDone(file);
     if (isDone) {
@@ -112,13 +134,5 @@ export class FormFileUploadedFileListComponent {
       return isCompleted;
     }
     return false;
-  }
-
-  clickedImage(imageurl: string) {
-    this.dialog.open(PreviewImagePopupComponent, {
-      data: imageurl,
-      hasBackdrop: true,
-      disableClose: false
-    });
   }
 }

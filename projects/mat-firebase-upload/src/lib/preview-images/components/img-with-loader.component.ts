@@ -1,9 +1,15 @@
 import { Component, Input } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { PreviewImagePopupComponent } from './preview-image-popup.component';
 
 @Component({
   selector: 'img-with-loader',
   template: `
-    <div class="container">
+    <div
+      class="container"
+      [ngStyle]="{ 'padding-bottom': aspectRatio * 100 + '%' }"
+      [class.height-auto]="!hasLoaded"
+    >
       <div class="full-width justify bg-grey" *ngIf="!hasLoaded">
         <div class="margin10">
           <mat-progress-spinner [diameter]="80" mode="indeterminate">
@@ -11,10 +17,13 @@ import { Component, Input } from '@angular/core';
         </div>
       </div>
       <img
-        class="full-width"
+        image
+        #img
+        class="image-fit has-pointer"
         [hidden]="!hasLoaded && !hasError"
+        (click)="clickedImage(src)"
         [src]="src"
-        (load)="hasLoaded = true"
+        (load)="onLoaded(img); hasLoaded = true"
         (error)="hasError = true"
       />
     </div>
@@ -28,14 +37,30 @@ import { Component, Input } from '@angular/core';
         display: flex;
         justify-content: center;
       }
-      .container {
-        position: relative;
-      }
       .full-width {
         width: 100%;
       }
       .margin10 {
-        margin: 10%;
+        margin: 50px;
+      }
+      .container {
+        position: relative;
+        height: 0;
+      }
+      .image-fit {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        object-position: center center;
+      }
+      .height-auto {
+        height: auto;
+      }
+      .has-pointer {
+        cursor: pointer;
       }
       :host {
         display: block;
@@ -50,6 +75,8 @@ export class LibImgWithLoaderComponent {
   hasLoaded = false;
   hasError = false;
 
+  aspectRatio = 0;
+
   // tslint:disable-next-line: variable-name
   private _src: string;
   @Input()
@@ -60,5 +87,21 @@ export class LibImgWithLoaderComponent {
   }
   get src() {
     return this._src;
+  }
+
+  constructor(private dialog: MatDialog) {}
+
+  clickedImage(imageurl: string) {
+    this.dialog.open(PreviewImagePopupComponent, {
+      data: imageurl,
+      hasBackdrop: true,
+      disableClose: false
+    });
+  }
+
+  onLoaded(img: HTMLImageElement) {
+    console.log({ img });
+    const { naturalHeight, naturalWidth } = img;
+    this.aspectRatio = naturalHeight / naturalWidth;
   }
 }

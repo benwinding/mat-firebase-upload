@@ -7,11 +7,11 @@ import { FormFileObject } from 'mat-firebase-upload/public-api';
 function blankFile(url: string): FormFileObject {
   return {
     id: url,
-    fileicon: null,
+    fileicon: '/assets/fileicons/image.svg',
     imageurl: url,
     bucket_path: '',
     value: {
-      name: 'image.jpeg',
+      name: 'imageimageimageimageimageimageimageimageimageimageimageimageimage.jpeg',
       props: {
         thumb: '',
         fileicon: '',
@@ -39,7 +39,8 @@ function blankFile(url: string): FormFileObject {
 })
 export class AppComponent {
   controlFiles = new FormControl([
-    blankFile('https://i.imgur.com/uUL3zYD.jpg')
+    blankFile('https://i.imgur.com/uUL3zYD.jpg'),
+    blankFile('https://i.imgur.com/HSdYMMN.jpg'),
   ]);
   config: FormFirebaseFilesConfiguration;
 

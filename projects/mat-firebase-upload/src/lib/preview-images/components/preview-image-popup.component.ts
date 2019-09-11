@@ -16,7 +16,23 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
       >
         <mat-icon>open_in_new</mat-icon>
       </a>
-      <img-with-loader class="fill fill-min" [src]="imageSrc"></img-with-loader>
+      <div
+        class="full-width justify bg-grey"
+        *ngIf="!img.hasLoaded && !img.hasError"
+      >
+        <div class="margin10">
+          <mat-progress-spinner [diameter]="90" mode="indeterminate">
+          </mat-progress-spinner>
+        </div>
+      </div>
+      <img
+        #img
+        class="fill full-width"
+        [src]="imageSrc"
+        [hidden]="!img.hasLoaded && !img.hasError"
+        (load)="img.hasLoaded = true"
+        (error)="img.hasError = true"
+      />
     </div>
   `,
   styles: [
@@ -38,12 +54,22 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
         right: 10px;
         bottom: 10px;
       }
+      .full-width {
+        width: 100%;
+      }
+      .bg-grey {
+        background-color: #dddddd78;
+      }
+      .margin10 {
+        margin: 70px;
+      }
+      .justify {
+        display: flex;
+        justify-content: center;
+      }
       .fill {
         max-height: 90vh;
         max-width: 90vw;
-      }
-      .fill-min {
-        min-width: 250px;
       }
     `
   ]
@@ -53,7 +79,7 @@ export class PreviewImagePopupComponent {
     public dialogRef: MatDialogRef<PreviewImagePopupComponent>,
     @Inject(MAT_DIALOG_DATA) public imageSrc: string
   ) {}
-
+  
   onCancel() {
     this.dialogRef.close();
   }
