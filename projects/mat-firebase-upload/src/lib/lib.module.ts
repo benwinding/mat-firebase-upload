@@ -6,7 +6,9 @@ import {
   MatProgressBarModule,
   MatSnackBarModule,
   MatDialogModule,
-  MatProgressSpinnerModule
+  MatProgressSpinnerModule,
+  MatButtonModule,
+  MatTooltipModule
 } from '@angular/material';
 import { CommonModule } from '@angular/common';
 import { NotificationService } from './utils/notification.service';
@@ -28,6 +30,8 @@ const shared = [
     FormsModule,
     ReactiveFormsModule,
     MatDialogModule,
+    MatButtonModule,
+    MatTooltipModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,

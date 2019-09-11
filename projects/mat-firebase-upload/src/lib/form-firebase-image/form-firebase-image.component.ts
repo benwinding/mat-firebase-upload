@@ -22,6 +22,8 @@ import {
   blobToDataURL,
   downscaleImage
 } from '../utils/img-helpers';
+import { MatDialog } from '@angular/material';
+import { PreviewImagePopupComponent } from '../preview-images/components/preview-image-popup.component';
 
 export interface FormFirebaseImageConfiguration {
   directory: string;
@@ -47,20 +49,45 @@ export interface FormFirebaseImageConfiguration {
       >
         <input
           class="hidden"
+          placeholder="placeholder"
           type="file"
           [disabled]="disabled"
           (change)="onFileInputChange($event)"
           accept="image/*"
         />
-        Drop/Click to Add Image
+        <p class="upload-message">{{ uploadMessage }}</p>
         <div
-          class="img-preview"
-          *ngIf="value?.id"
-          [ngStyle]="{ backgroundImage: 'url(' + value?.id + ')' }"
+          class="flex-h max-width justify-around"
+          *ngIf="value?.id as imageurl"
         >
-          <mat-icon class="remove-btn" (click)="clickRemoveTag(value)">
-            clear
-          </mat-icon>
+          <div class="full-width" *ngIf="!img.hasLoaded && !img.hasError">
+            <div class="margin10">
+              <mat-progress-spinner [diameter]="90" mode="indeterminate">
+              </mat-progress-spinner>
+            </div>
+          </div>
+          <div class="relative" [hidden]="!img.hasLoaded && !img.hasError">
+            <button
+              mat-mini-fab
+              color="secondary"
+              class="remove-btn"
+              (click)="clickRemoveTag(value)"
+              matTooltip="Click to replace current image"
+            >
+              <mat-icon>
+                swap_horiz
+              </mat-icon>
+            </button>
+            <img
+              #img
+              class="file-thumb has-pointer"
+              matTooltip="Click to preview image"
+              (click)="onImageClicked($event, imageurl)"
+              [src]="imageurl"
+              (load)="img.hasLoaded = true"
+              (error)="img.hasError = true"
+            />
+          </div>
         </div>
         <div
           class="full-width"
@@ -77,28 +104,39 @@ export interface FormFirebaseImageConfiguration {
   `,
   styles: [
     `
+      .relative {
+        position: relative;
+      }
       .container {
         display: flex;
         flex-direction: column;
+        position: relative;
       }
       .placeholder {
         color: grey;
         margin-bottom: 5px;
       }
+      .upload-message {
+        font-size: 1.5em;
+        margin-top: 0;
+        margin-bottom: 10px;
+        text-align: center;
+        color: #777;
+        cursor: pointer;
+      }
       .remove-btn {
         position: absolute;
-        right: 0px;
-        top: 0px;
+        right: 5px;
+        top: 5px;
       }
       .custom-file-upload {
-        border: 4px dashed #ccc;
         display: inline-block;
-        padding: 35px 0px;
+        border: 4px dashed #ccc;
+        background: transparent;
+        padding: 10px;
         cursor: pointer;
-        width: calc(100% - 8px);
-        text-align: center;
-        font-size: 1.5em;
-        color: #777;
+        width: calc(100% - 8px - 20px);
+        min-height: 200px;
       }
       .dragover {
         background: #ddd;
@@ -106,13 +144,21 @@ export interface FormFirebaseImageConfiguration {
       .hidden {
         display: none;
       }
-      .img-preview {
-        position: relative;
-        width: 100%;
-        height: 200px;
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center;
+      .justify-around {
+        justify-content: space-around;
+      }
+      .flex-h {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+      .has-pointer {
+        cursor: pointer;
+      }
+      .file-thumb {
+        height: 250px;
+        width: auto;
+        max-width: 100%;
       }
     `
   ],
@@ -132,7 +178,9 @@ export interface FormFirebaseImageConfiguration {
 export class FormFirebaseImageComponent extends FormBase<FormFileObject>
   implements OnInit, OnDestroy {
   @Input()
-  placeholder = 'upload here';
+  placeholder = 'Attached Files';
+  @Input()
+  uploadMessage = 'Upload an Image Here';
   private _config: FormFirebaseImageConfiguration;
   @Input()
   set config(config: FormFirebaseImageConfiguration) {
@@ -156,7 +204,7 @@ export class FormFirebaseImageComponent extends FormBase<FormFileObject>
 
   isDraggingOnTop = false;
 
-  constructor(public ns: NotificationService) {
+  constructor(public ns: NotificationService, private dialog: MatDialog) {
     super();
   }
 
@@ -167,6 +215,16 @@ export class FormFirebaseImageComponent extends FormBase<FormFileObject>
   ngOnInit() {}
   ngOnDestroy() {
     this.destroyed.next();
+  }
+
+  onImageClicked($event, imageurl: string) {
+    $event.preventDefault();
+    $event.stopPropagation();
+    this.dialog.open(PreviewImagePopupComponent, {
+      data: imageurl,
+      hasBackdrop: true,
+      disableClose: false
+    });
   }
 
   initFirebase() {

@@ -32,6 +32,7 @@ import { PreviewImagePopupComponent } from '../preview-images/components/preview
               <img
                 #img
                 class="file-thumb has-pointer"
+                matTooltip="Click to preview image"
                 (click)="clickedImage(imageurl)"
                 [src]="imageurl"
                 [hidden]="!img.hasLoaded && !img.hasError"
@@ -82,6 +83,7 @@ import { PreviewImagePopupComponent } from '../preview-images/components/preview
         margin: 3px;
         height: 30px;
         width: auto;
+        max-width: 60px;
       }
       .file-thumb {
         background-color: #ddd;
