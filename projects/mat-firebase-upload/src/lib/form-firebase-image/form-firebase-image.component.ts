@@ -159,8 +159,8 @@ export interface FormFirebaseImageConfiguration {
         cursor: pointer;
       }
       .file-thumb {
-        height: 250px;
         width: auto;
+        max-height: 250px;
         max-width: 100%;
       }
     `
