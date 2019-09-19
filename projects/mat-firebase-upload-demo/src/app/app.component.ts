@@ -68,7 +68,8 @@ export class AppComponent {
     this.config = {
       directory: `audits/somelocation`,
       firebaseConfig: environment.firebaseConfig,
-      useUuidName: true
+      useUuidName: true,
+      acceptedFiles: 'application/pdf'
     };
     this.controlImage2.setValue(null);
     setTimeout(() => {
