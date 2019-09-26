@@ -63,9 +63,14 @@ export interface FormFirebaseFilesConfiguration {
           [disabled]="disabled || maxReached"
           (change)="onFileInputChange($event)"
         />
-        <span *ngIf="isConfigLoaded">
-          {{ placeholder }}
-        </span>
+        <div class="flex-v">
+          <span *ngIf="isConfigLoaded">
+            {{ placeholder }}
+          </span>
+          <i *ngIf="disabled">
+            (disabled)
+          </i>
+        </div>
         <span *ngIf="!isConfigLoaded">
           [config] is waiting for variable config:
           FormFirebaseFilesConfiguration to resolve
@@ -105,6 +110,11 @@ export interface FormFirebaseFilesConfiguration {
         font-size: 0.9em;
         color: orange;
         font-style: italic;
+      }
+      .flex-v {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
       }
     `
   ],

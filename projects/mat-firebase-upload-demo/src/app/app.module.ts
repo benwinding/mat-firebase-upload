@@ -5,7 +5,7 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { MatTabsModule, MatIconModule, MatButtonModule } from '@angular/material';
+import { MatTabsModule, MatIconModule, MatButtonModule, MatSlideToggleModule } from '@angular/material';
 import { AppRoutingModule } from './app.routing';
 import { MatFirebaseUploadModule } from 'projects/mat-firebase-upload/src/public-api';
 
@@ -23,6 +23,7 @@ import { MatFirebaseUploadModule } from 'projects/mat-firebase-upload/src/public
 
     MatTabsModule,
     MatButtonModule,
+    MatSlideToggleModule,
     MatIconModule,
 
     AppRoutingModule

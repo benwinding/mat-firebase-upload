@@ -30,6 +30,10 @@ function blankFile2(): FormFileObject {
 @Component({
   selector: 'app-root',
   template: `
+    <div>
+      <h5>Controls Enabled({{ enabledControl.value | json }})</h5>
+      <mat-slide-toggle [formControl]="enabledControl"> </mat-slide-toggle>
+    </div>
     <h2>Files Uploader/Viewer Control</h2>
     <form-firebase-files [formControl]="controlFiles" [config]="config">
     </form-firebase-files>
@@ -60,6 +64,9 @@ export class AppComponent {
   ]);
   controlImage = new FormControl(blankFile('https://i.imgur.com/uUL3zYD.jpg'));
   controlImage2 = new FormControl(blankFile('https://i.imgur.com/HSdYMMN.jpg'));
+
+  enabledControl = new FormControl(true);
+
   config: FormFirebaseFilesConfiguration;
 
   imgUrl = 'https://i.imgur.com/uUL3zYD.jpg';
@@ -70,6 +77,17 @@ export class AppComponent {
       firebaseConfig: environment.firebaseConfig,
       useUuidName: true
     };
+    this.enabledControl.valueChanges.subscribe(isEnabled => {
+      if (isEnabled) {
+        this.controlFiles.enable();
+        this.controlImage.enable();
+        this.controlImage2.enable();
+      } else {
+        this.controlFiles.disable();
+        this.controlImage.disable();
+        this.controlImage2.disable();
+      }
+    });
     this.controlImage2.setValue(null);
     setTimeout(() => {
       this.controlImage2.patchValue(blankFile2());

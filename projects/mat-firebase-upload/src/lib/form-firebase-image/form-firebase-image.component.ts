@@ -71,6 +71,7 @@ export interface FormFirebaseImageConfiguration {
               mat-mini-fab
               color="secondary"
               class="remove-btn"
+              [disabled]="disabled"
               (click)="clickRemoveTag(value)"
               matTooltip="Click to replace current image"
             >
