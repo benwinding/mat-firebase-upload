@@ -33,7 +33,7 @@ export interface FormFirebaseFilesConfiguration {
   imageCompressionQuality?: number;
   imageCompressionMaxSize?: number;
   useUuidName?: boolean;
-  acceptedFiles?: 'image/*,application/*' | 'image/*';
+  acceptedFiles?: 'image/*' | 'application/pdf' | 'image/*,application/*' |  string;
 }
 
 @Component({
@@ -55,6 +55,7 @@ export interface FormFirebaseFilesConfiguration {
           multiple
           [disabled]="disabled || maxReached"
           (change)="onFileInputChange($event)"
+          [accept]="config.acceptedFiles || '*'"
         />
         <input
           *ngIf="!isMultiple"
@@ -62,6 +63,7 @@ export interface FormFirebaseFilesConfiguration {
           type="file"
           [disabled]="disabled || maxReached"
           (change)="onFileInputChange($event)"
+          [accept]="config.acceptedFiles || '*'"
         />
         <div class="flex-v">
           <span *ngIf="isConfigLoaded">
