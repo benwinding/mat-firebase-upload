@@ -12,7 +12,7 @@ import { FormFileObject } from '../FormFileObject';
 import * as firebase from 'firebase/app';
 import 'firebase/storage';
 import { Subject, timer } from 'rxjs';
-import { take, takeUntil } from 'rxjs/operators';
+import { take, takeUntil, map } from 'rxjs/operators';
 import { getFileIcon, isFileImage } from '../utils/file-icon.helper';
 import { FormBase } from '../form-base-class';
 import { TrimSlashes } from '../utils/path-helpers';
@@ -23,7 +23,8 @@ import {
   downscaleImage
 } from '../utils/img-helpers';
 import { MatDialog } from '@angular/material';
-import { PreviewImagePopupComponent } from '../preview-images/components/preview-image-popup.component';
+import { PreviewImagePopupComponent } from '../subcomponents/preview-images/components/preview-image-popup.component';
+import { UploadsManager } from '../firebase/uploads-manager';
 
 export interface FormFirebaseImageConfiguration {
   directory: string;
@@ -189,7 +190,7 @@ export class FormFirebaseImageComponent extends FormBase<FormFileObject>
   @Input()
   set config(config: FormFirebaseImageConfiguration) {
     this._config = config || ({} as any);
-    this.initFirebase();
+    this.initUploadManager();
   }
   get config() {
     return this._config;
@@ -204,12 +205,12 @@ export class FormFirebaseImageComponent extends FormBase<FormFileObject>
   uploadStatusChanged = new EventEmitter<boolean>();
 
   destroyed = new Subject();
-  storage: firebase.storage.Storage;
 
   isDraggingOnTop = false;
 
   hasLoaded = false;
   hasError = false;
+  private um: UploadsManager;
 
   constructor(public ns: NotificationService, private dialog: MatDialog) {
     super();
@@ -234,50 +235,17 @@ export class FormFirebaseImageComponent extends FormBase<FormFileObject>
     });
   }
 
-  initFirebase() {
-    const app = this.getFirebaseApp(this.config);
-    if (!app) {
-      return;
-    }
-    this.storage = app.storage(this.currentBucketName());
-    timer(0, 1000)
-      .pipe(takeUntil(this.destroyed))
-      .subscribe(() => {
-        this.checkAllUploadsAreDone();
-      });
-  }
-
-  getFirebaseApp(config: FormFirebaseImageConfiguration): firebase.app.App {
-    if (config.firebaseApp) {
-      return config.firebaseApp;
-    }
-    if (!config.firebaseConfig) {
-      return null;
-    }
-    const firebaseConfig = this.config.firebaseConfig;
-    if (firebase.apps.length) {
-      return firebase.apps[0];
-    } else {
-      return firebase.initializeApp(firebaseConfig);
-    }
-  }
-
-  checkAllUploadsAreDone() {
-    const file = this.value;
-    if (!file || !file.value || !file.value.props) {
-      this.uploadStatusChanged.emit(true);
-      return;
-    }
-    const isCompleted = this.value.value.props.completed;
-    const isStillUploading = !isCompleted;
-    this.uploadStatusChanged.emit(isStillUploading);
-  }
-
-  private currentBucketName() {
-    return (
-      this.config.bucketname ||
-      // tslint:disable-next-line: no-string-literal
-      this.config.firebaseConfig['storageBucket']
+  initUploadManager() {
+    this.ngOnDestroy();
+    const $internalChangesTap = this.internalControl.valueChanges.pipe(
+      takeUntil(this.destroyed),
+      map(file => [file])
+    );
+    this.um = new UploadsManager(
+      this.config,
+      this.ns,
+      this.uploadStatusChanged,
+      $internalChangesTap
     );
   }
 
@@ -285,28 +253,14 @@ export class FormFirebaseImageComponent extends FormBase<FormFileObject>
     this.value = null;
     this.hasError = false;
     this.hasLoaded = false;
-    if (fileObject.bucket_path) {
-      try {
-        await this.storage.refFromURL(fileObject.bucket_path).delete();
-        console.log('form-files: clickRemoveTag() file deleted from storage', {
-          fileObject
-        });
-      } catch (error) {
-        console.log(
-          'form-files: clickRemoveTag() problem deleting file',
-          error
-        );
-      }
-    }
+    this.um.clickRemoveTag(fileObject);
   }
 
   onFileInputChange(event) {
     const files = event.target.files;
-    if (files && files.length) {
-      const filesList = files;
-      const fileArray = Array.from(filesList);
-      fileArray.map((file: File) => this.beginUploadTask(file));
-    }
+    this.hasLoaded = false;
+    this.hasError = false;
+    this.um.onFileInputChange(files);
   }
 
   onFileDrop(event) {
@@ -315,143 +269,8 @@ export class FormFirebaseImageComponent extends FormBase<FormFileObject>
       return;
     }
     const files = event.dataTransfer.files;
-    if (files && files.length) {
-      const filesList = files;
-      const fileArray = Array.from(filesList);
-      fileArray.map((file: File) => this.beginUploadTask(file));
-    }
-  }
-
-  async beginUploadTask(file: File) {
     this.hasLoaded = false;
     this.hasError = false;
-    const bucketPath = 'gs://' + this.currentBucketName();
-    const uniqueFileName = file.name;
-    const originalFileName = file.name;
-    const dir = this.config.directory;
-    const dirPath = `${TrimSlashes(bucketPath)}/${TrimSlashes(dir)}`;
-    const fullPath = `${TrimSlashes(dirPath)}/${uniqueFileName}`;
-    console.log('beginUploadTask()', { fileData: file, bucketPath, fullPath });
-    let fileParsed;
-    if (file.type === 'image/*') {
-      fileParsed = await this.parseAndCompress(file);
-    } else {
-      fileParsed = file;
-    }
-    await this.addFile(uniqueFileName, originalFileName, fullPath);
-    const uploadTask = this.storage.refFromURL(fullPath).put(fileParsed);
-    uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, {
-      next: snap => this.onNext(snap, fullPath),
-      error: error => this.onError(error),
-      complete: () =>
-        this.onComplete(fullPath, uniqueFileName, originalFileName)
-    });
-
-    this.destroyed.pipe(take(1)).subscribe(() => {
-      uploadTask.cancel();
-    });
-  }
-
-  async parseAndCompress(file) {
-    if (
-      !this.config.imageCompressionMaxSize &&
-      !this.config.imageCompressionQuality
-    ) {
-      return file;
-    }
-    const maxWidth = this.config.imageCompressionMaxSize || 1800;
-    const maxQuality = this.config.imageCompressionQuality || 0.6;
-    const dataURL = await blobToDataURL(file);
-    const newDataURL = await downscaleImage(
-      dataURL,
-      maxWidth,
-      maxQuality,
-      'image/jpeg'
-    );
-    const oldKb = this.getFileSizeKiloBytes(dataURL);
-    const newKb = this.getFileSizeKiloBytes(newDataURL);
-    const fileNew = dataURItoBlob(newDataURL) as File;
-    console.log(`app-tags-files.component: optimized image...
-  --> old=${oldKb} kb
-  --> new=${newKb} kb`);
-    return fileNew;
-  }
-
-  getFileSizeKiloBytes(dataURL) {
-    const head = 'data:image/*;base64,';
-    const fileSizeBytes = Math.round(((dataURL.length - head.length) * 3) / 4);
-    const fileSizeKiloBytes = (fileSizeBytes / 1024).toFixed(0);
-    return fileSizeKiloBytes;
-  }
-
-  async onNext(
-    snapshot: firebase.storage.UploadTaskSnapshot,
-    fullPath: string
-  ) {
-    switch (snapshot.state) {
-      case firebase.storage.TaskState.RUNNING: // or 'running'
-        const file = this.value;
-        if (!file || !file.value || !file.value.props) {
-          return;
-        }
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log('Upload is running', {
-          file,
-          fullPath,
-          progress,
-          snapshot
-        });
-        file.value.props.progress = progress;
-        break;
-    }
-  }
-
-  onError(error) {
-    this.ns.notify(error.message, 'Error Uploading', true);
-    console.error('onError(error)', { error }, error);
-  }
-
-  async onComplete(fullPath, uniqueFileName, originalFileName) {
-    console.log('onComplete()', {
-      fullPath,
-      uniqueFileName,
-      originalFileName,
-      thisValue: this.value
-    });
-    const ref = this.storage.refFromURL(fullPath);
-    const url = await ref.getDownloadURL();
-    const isImage = isFileImage(originalFileName);
-
-    const file = this.value;
-    if (!file || !file.value || !file.value.props) {
-      return;
-    }
-    file.id = url;
-    if (isImage) {
-      file.imageurl = url;
-    }
-    file.value.props.completed = true;
-    this.writeValue(this.value);
-  }
-
-  addFile(uniqueFileName: string, originalFileName: string, fullPath: string) {
-    const fileIcon = getFileIcon(originalFileName);
-    const newFile: FormFileObject = {
-      id: uniqueFileName,
-      fileicon: fileIcon,
-      imageurl: null,
-      bucket_path: fullPath,
-      value: {
-        name: originalFileName,
-        props: {
-          thumb: null,
-          fileicon: fileIcon,
-          progress: 0,
-          completed: false
-        }
-      }
-    };
-    this.value = newFile;
+    this.um.onFileInputChange(files);
   }
 }

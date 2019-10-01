@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { FormFirebaseFilesConfiguration } from 'projects/mat-firebase-upload/src/lib/form-firebase-files/form-firebase-files.component';
+import { FormFirebaseFilesConfiguration } from 'projects/mat-firebase-upload/src/public-api';
 import { environment } from '../environments/environment';
 import { FormFileObject } from 'mat-firebase-upload/public-api';
 
@@ -37,6 +37,9 @@ function blankFile2(): FormFileObject {
     <h2>Files Uploader/Viewer Control</h2>
     <form-firebase-files [formControl]="controlFiles" [config]="config">
     </form-firebase-files>
+    <h2>File Uploader/Viewer Control</h2>
+    <form-firebase-file [formControl]="controlFile" [config]="config">
+    </form-firebase-file>
     <h2>Files Viewer Only</h2>
     <form-firebase-files-viewer [value]="controlFiles.value">
     </form-firebase-files-viewer>
@@ -62,6 +65,7 @@ export class AppComponent {
     blankFile('https://i.imgur.com/uUL3zYD.jpg'),
     blankFile('https://i.imgur.com/HSdYMMN.jpg')
   ]);
+  controlFile = new FormControl(blankFile('https://i.imgur.com/uUL3zYD.jpg'));
   controlImage = new FormControl(blankFile('https://i.imgur.com/uUL3zYD.jpg'));
   controlImage2 = new FormControl(blankFile('https://i.imgur.com/HSdYMMN.jpg'));
 
@@ -76,14 +80,16 @@ export class AppComponent {
       directory: `audits/somelocation`,
       firebaseConfig: environment.firebaseConfig,
       useUuidName: true,
-      acceptedFiles: 'application/pdf'
+      acceptedFiles: 'application/pdf,image/*'
     };
     this.enabledControl.valueChanges.subscribe(isEnabled => {
       if (isEnabled) {
+        this.controlFile.enable();
         this.controlFiles.enable();
         this.controlImage.enable();
         this.controlImage2.enable();
       } else {
+        this.controlFile.disable();
         this.controlFiles.disable();
         this.controlImage.disable();
         this.controlImage2.disable();

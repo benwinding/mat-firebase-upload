@@ -1,7 +1,7 @@
 import { EventEmitter, Component, Input, Output } from '@angular/core';
 import { FormFileObject } from '../FormFileObject';
 import { MatDialog } from '@angular/material';
-import { PreviewImagePopupComponent } from '../preview-images/components/preview-image-popup.component';
+import { PreviewImagePopupComponent } from './preview-images/components/preview-image-popup.component';
 
 @Component({
   selector: 'lib-uploaded-files-list',
