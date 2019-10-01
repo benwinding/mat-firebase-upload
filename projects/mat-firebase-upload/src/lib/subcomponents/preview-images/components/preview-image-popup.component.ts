@@ -17,7 +17,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
         <mat-icon>open_in_new</mat-icon>
       </a>
       <div
-        class="full-width justify bg-grey"
+        class="justify bg-grey"
         *ngIf="!img.hasLoaded && !img.hasError"
       >
         <div class="margin10">
@@ -27,7 +27,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
       </div>
       <img
         #img
-        class="fill full-width"
+        class="fill"
         [src]="imageSrc"
         [hidden]="!img.hasLoaded && !img.hasError"
         (load)="img.hasLoaded = true"
@@ -54,9 +54,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
         right: 10px;
         bottom: 10px;
       }
-      .full-width {
-        width: 100%;
-      }
       .bg-grey {
         background-color: #dddddd78;
       }
@@ -69,7 +66,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
       }
       .fill {
         max-height: 90vh;
-        max-width: 90vw;
+        max-width: 100%;
       }
     `
   ]

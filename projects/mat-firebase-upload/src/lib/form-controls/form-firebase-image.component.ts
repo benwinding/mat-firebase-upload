@@ -96,9 +96,6 @@ export interface FormFirebaseImageConfiguration {
         </div>
       </label>
     </div>
-    <pre>
-  </pre
-    >
   `,
   styles: [
     `
