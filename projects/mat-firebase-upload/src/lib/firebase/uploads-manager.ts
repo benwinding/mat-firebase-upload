@@ -14,6 +14,7 @@ import {
   getFileIcon
 } from '../utils';
 import { EventEmitter } from '@angular/core';
+import {v4 as uuidv4 } from 'uuid';
 
 export interface IUploadsManager {
   $currentFiles: Observable<FormFileObject[]>;
@@ -159,7 +160,7 @@ export class UploadsManager implements IUploadsManager {
 
   private async beginUploadTask(file: File) {
     const bucketPath = 'gs://' + this.currentBucketName();
-    const uniqueFileName = file.name;
+    const uniqueFileName = this.config.useUuidName ? uuidv4() : file.name;
     const originalFileName = file.name;
     const dir = this.config.directory;
     const dirPath = `${TrimSlashes(bucketPath)}/${TrimSlashes(dir)}`;
