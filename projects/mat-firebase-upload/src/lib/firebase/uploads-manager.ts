@@ -14,7 +14,7 @@ import {
   getFileIcon
 } from '../utils';
 import { EventEmitter } from '@angular/core';
-import {v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface IUploadsManager {
   $currentFiles: Observable<FormFileObject[]>;
@@ -99,7 +99,6 @@ export class UploadsManager implements IUploadsManager {
   private checkAllUploadsAreDone() {
     const currentFiles = this.getCurrentFiles();
     const completeArray = currentFiles
-      .filter(f => !!f)
       .filter(f => !!f.value)
       .filter(f => !!f.value.props)
       .map(f => f.value.props.completed);
@@ -298,6 +297,6 @@ export class UploadsManager implements IUploadsManager {
     if (!Array.isArray(allFiles)) {
       allFiles = [];
     }
-    return allFiles;
+    return allFiles.filter(f => !!f);
   }
 }
