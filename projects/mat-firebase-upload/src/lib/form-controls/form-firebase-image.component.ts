@@ -11,17 +11,10 @@ import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 import { FormFileObject } from '../FormFileObject';
 import * as firebase from 'firebase/app';
 import 'firebase/storage';
-import { Subject, timer } from 'rxjs';
-import { take, takeUntil, map } from 'rxjs/operators';
-import { getFileIcon, isFileImage } from '../utils/file-icon.helper';
+import { Subject } from 'rxjs';
+import { takeUntil, map } from 'rxjs/operators';
 import { FormBase } from '../form-base-class';
-import { TrimSlashes } from '../utils/path-helpers';
 import { NotificationService } from '../utils/notification.service';
-import {
-  dataURItoBlob,
-  blobToDataURL,
-  downscaleImage
-} from '../utils/img-helpers';
 import { MatDialog } from '@angular/material';
 import { PreviewImagePopupComponent } from '../subcomponents/preview-images/components/preview-image-popup.component';
 import { UploadsManager } from '../firebase/uploads-manager';

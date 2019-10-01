@@ -110,12 +110,12 @@ import { PreviewImagePopupComponent } from '../subcomponents/preview-images/comp
         color: #777;
         cursor: pointer;
       }
-      .remove-btn {FormFirebaseFilesComponent
+      .remove-btn {
         position: absolute;
         right: 5px;
         top: 5px;
       }
-      .customFormFirebaseFilesComponent
+      .custom-file-upload {
         display: inline-block;
         border: 4px dashed #ccc;
         background: transparent;
