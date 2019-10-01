@@ -224,6 +224,11 @@ export class FormFirebaseImageComponent extends FormBase<FormFileObject>
       this.uploadStatusChanged,
       $internalChangesTap
     );
+    this.um.$currentFiles.pipe(takeUntil(this.destroyed)).subscribe(vals => {
+      if (Array.isArray(vals)) {
+        this.value = vals[0];
+      }
+    });
   }
 
   async clickRemoveTag(fileObject: FormFileObject) {

@@ -51,7 +51,6 @@ import { PreviewImagePopupComponent } from '../subcomponents/preview-images/comp
         </lib-uploaded-files-list>
       </div>
     </div>
-    <pre></pre>
   `,
   styles: [
     `
@@ -188,6 +187,11 @@ export class FormFirebaseFileComponent extends FormBase<FormFileObject>
       this.uploadStatusChanged,
       $internalChangesTap
     );
+    this.um.$currentFiles.pipe(takeUntil(this.destroyed)).subscribe(vals => {
+      if (Array.isArray(vals)) {
+        this.value = vals[0];
+      }
+    });
   }
 
   async clickRemoveTag(fileObject: FormFileObject) {

@@ -35,30 +35,59 @@ function blankFile2(): FormFileObject {
       <mat-slide-toggle [formControl]="enabledControl"> </mat-slide-toggle>
     </div>
     <h2>Files Uploader/Viewer Control</h2>
-    <form-firebase-files [formControl]="controlFiles" [config]="config">
-    </form-firebase-files>
+    <div class="container-2cols">
+      <form-firebase-files [formControl]="controlFiles" [config]="config">
+      </form-firebase-files>
+      <pre>{{ controlFiles?.value | json }}</pre>
+    </div>
     <h2>File Uploader/Viewer Control</h2>
-    <form-firebase-file [formControl]="controlFile" [config]="config">
-    </form-firebase-file>
+    <div class="container-2cols">
+      <form-firebase-file [formControl]="controlFile" [config]="config">
+      </form-firebase-file>
+      <pre>{{ controlFile?.value | json }}</pre>
+    </div>
     <h2>Files Viewer Only</h2>
-    <form-firebase-files-viewer [value]="controlFiles.value">
-    </form-firebase-files-viewer>
+    <div class="container-2cols">
+      <form-firebase-files-viewer [value]="controlFiles.value">
+      </form-firebase-files-viewer>
+      <pre>{{ controlFiles?.value | json }}</pre>
+    </div>
     <h2>Image Uploader/Viewer Control</h2>
-    <form-firebase-image [formControl]="controlImage" [config]="config">
-    </form-firebase-image>
+    <div class="container-2cols">
+      <form-firebase-image [formControl]="controlImage" [config]="config">
+      </form-firebase-image>
+      <pre>{{ controlImage?.value | json }}</pre>
+    </div>
     <h2>Image Uploader/Viewer Control2</h2>
-    <form-firebase-image [formControl]="controlImage2" [config]="config">
-    </form-firebase-image>
-    <h5>Value</h5>
-    <pre>
-      {{ controlImage2.value | json }}
-    </pre
-    >
+    <div class="container-2cols">
+      <form-firebase-image [formControl]="controlImage2" [config]="config">
+      </form-firebase-image>
+      <pre>{{ controlImage2?.value | json }}</pre>
+    </div>
     <h2>Image With Loader</h2>
-    <img-with-loader [src]="imgUrl"></img-with-loader>
+    <div class="container-2cols">
+      <img-with-loader [src]="imgUrl"></img-with-loader>
+      <pre>{{ imgUrl | json }}</pre>
+    </div>
     <h2>Image Gallery</h2>
-    <preview-gallery [imageUrls]="[imgUrl]"> </preview-gallery>
-  `
+    <div class="container-2cols">
+      <preview-gallery [imageUrls]="imgUrls"> </preview-gallery>
+      <pre>{{ imgUrls | json }}</pre>
+    </div>
+  `,
+  styles: [
+    `
+      .container-2cols {
+        display: grid;
+        grid-template-columns: 50% 50%;
+        overflow: hidden;
+      }
+      pre {
+        overflow: auto;
+        width: 100%;
+      }
+    `
+  ]
 })
 export class AppComponent {
   controlFiles = new FormControl([
@@ -74,6 +103,7 @@ export class AppComponent {
   config: FormFirebaseFilesConfiguration;
 
   imgUrl = 'https://i.imgur.com/uUL3zYD.jpg';
+  imgUrls = ['https://i.imgur.com/uUL3zYD.jpg', 'https://i.imgur.com/HSdYMMN.jpg'];
 
   constructor() {
     this.config = {

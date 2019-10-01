@@ -21,7 +21,6 @@ export interface IUploadsManager {
   onDestroy();
   clickRemoveTag(fileObject: FormFileObject): Promise<void>;
   onFileInputChange(event);
-  onFileDrop(event);
 }
 
 export class UploadsManager implements IUploadsManager {
@@ -147,16 +146,6 @@ export class UploadsManager implements IUploadsManager {
     }
   }
 
-  public onFileDrop(event) {
-    event.preventDefault();
-    const files = event.dataTransfer.files;
-    if (files && files.length) {
-      const filesList = files;
-      const fileArray = Array.from(filesList);
-      fileArray.map((file: File) => this.beginUploadTask(file));
-    }
-  }
-
   private async beginUploadTask(file: File) {
     const bucketPath = 'gs://' + this.currentBucketName();
     const uniqueFileName = this.config.useUuidName ? uuidv4() : file.name;
@@ -183,6 +172,32 @@ export class UploadsManager implements IUploadsManager {
     this.destroyed.pipe(take(1)).subscribe(() => {
       uploadTask.cancel();
     });
+  }
+
+  private addFile(
+    uniqueFileName: string,
+    originalFileName: string,
+    fullPath: string
+  ) {
+    const fileIcon = getFileIcon(originalFileName);
+    const newFile: FormFileObject = {
+      id: uniqueFileName,
+      fileicon: fileIcon,
+      imageurl: null,
+      bucket_path: fullPath,
+      value: {
+        name: originalFileName,
+        props: {
+          thumb: null,
+          fileicon: fileIcon,
+          progress: 0,
+          completed: false
+        }
+      }
+    };
+    const currentFiles = this.getCurrentFiles();
+    currentFiles.push(newFile);
+    this._$trackedFiles.next(currentFiles);
   }
 
   private async parseAndCompress(file): Promise<File> {
@@ -223,12 +238,20 @@ export class UploadsManager implements IUploadsManager {
   ) {
     switch (snapshot.state) {
       case firebase.storage.TaskState.RUNNING: // or 'running'
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         const file = this.getCurrentFiles().find(
           f => f.bucket_path === fullPath
         );
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log('Upload is running', {
+        if (!file) {
+          console.warn('onNext: Cannot find matching file', {
+            fullPath,
+            progress,
+            snapshot
+          });
+          return;
+        }
+        console.log('onNext: Upload is running', {
           file,
           fullPath,
           progress,
@@ -263,32 +286,6 @@ export class UploadsManager implements IUploadsManager {
       file.imageurl = url;
     }
     file.value.props.completed = true;
-    this._$trackedFiles.next(currentFiles);
-  }
-
-  private addFile(
-    uniqueFileName: string,
-    originalFileName: string,
-    fullPath: string
-  ) {
-    const fileIcon = getFileIcon(originalFileName);
-    const newFile: FormFileObject = {
-      id: uniqueFileName,
-      fileicon: fileIcon,
-      imageurl: null,
-      bucket_path: fullPath,
-      value: {
-        name: originalFileName,
-        props: {
-          thumb: null,
-          fileicon: fileIcon,
-          progress: 0,
-          completed: false
-        }
-      }
-    };
-    const currentFiles = this.getCurrentFiles();
-    currentFiles.push(newFile);
     this._$trackedFiles.next(currentFiles);
   }
 
