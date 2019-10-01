@@ -9,8 +9,6 @@ import {
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 import { FormFileObject } from '../FormFileObject';
-import * as firebase from 'firebase/app';
-import 'firebase/storage';
 import { Subject } from 'rxjs';
 import { takeUntil, map } from 'rxjs/operators';
 import { FormBase } from '../form-base-class';
@@ -18,15 +16,7 @@ import { NotificationService } from '../utils/notification.service';
 import { MatDialog } from '@angular/material';
 import { PreviewImagePopupComponent } from '../subcomponents/preview-images/components/preview-image-popup.component';
 import { UploadsManager } from '../firebase/uploads-manager';
-
-export interface FormFirebaseImageConfiguration {
-  directory: string;
-  bucketname?: string;
-  firebaseConfig?: {};
-  firebaseApp?: firebase.app.App;
-  imageCompressionQuality?: number;
-  imageCompressionMaxSize?: number;
-}
+import { FormFirebaseImageConfiguration } from '../FormFirebaseFileConfiguration';
 
 @Component({
   // tslint:disable-next-line: component-selector

@@ -2,7 +2,7 @@ import { timer, Subject, BehaviorSubject, Observable } from 'rxjs';
 import { takeUntil, take, tap, filter, delay } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 import 'firebase/storage';
-import { FormFirebaseConfigurationBase } from '../FormFirebaseConfigurationBase';
+import { FormFirebaseConfigurationBase } from '../FormFirebaseFileConfiguration';
 import { FormFileObject } from '../FormFileObject';
 import {
   NotificationService,

@@ -16,22 +16,7 @@ import { takeUntil, tap, delay, filter } from 'rxjs/operators';
 import { FormBase } from '../form-base-class';
 import { NotificationService } from '../utils/notification.service';
 import { UploadsManager } from '../firebase/uploads-manager';
-
-export interface FormFirebaseFilesConfiguration {
-  directory: string;
-  bucketname?: string;
-  firebaseConfig?: {};
-  firebaseApp?: firebase.app.App;
-  maxFiles?: number;
-  imageCompressionQuality?: number;
-  imageCompressionMaxSize?: number;
-  useUuidName?: boolean;
-  acceptedFiles?:
-    | 'image/*'
-    | 'application/pdf'
-    | 'image/*,application/*'
-    | string;
-}
+import { FormFirebaseFilesConfiguration } from '../FormFirebaseFileConfiguration';
 
 @Component({
   // tslint:disable-next-line: component-selector
