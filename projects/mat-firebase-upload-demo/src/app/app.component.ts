@@ -94,7 +94,7 @@ export class AppComponent {
     blankFile('https://i.imgur.com/uUL3zYD.jpg'),
     blankFile('https://i.imgur.com/HSdYMMN.jpg')
   ]);
-  controlFile = new FormControl(blankFile('https://i.imgur.com/uUL3zYD.jpg'));
+  controlFile = new FormControl([blankFile('https://i.imgur.com/uUL3zYD.jpg')]);
   controlImage = new FormControl(blankFile('https://i.imgur.com/uUL3zYD.jpg'));
   controlImage2 = new FormControl(blankFile('https://i.imgur.com/HSdYMMN.jpg'));
 

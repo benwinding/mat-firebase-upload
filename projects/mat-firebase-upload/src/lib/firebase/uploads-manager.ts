@@ -148,7 +148,12 @@ export class UploadsManager implements IUploadsManager {
 
   private async beginUploadTask(file: File) {
     const bucketPath = 'gs://' + this.currentBucketName();
-    const uniqueFileName = this.config.useUuidName ? uuidv4() : file.name;
+    let uniqueFileName;
+    if (this.config.useUuidName) {
+      uniqueFileName = uuidv4() + '.' + file.name.split('.').pop();
+    } else {
+      uniqueFileName = file.name;
+    }
     const originalFileName = file.name;
     const dir = this.config.directory;
     const dirPath = `${TrimSlashes(bucketPath)}/${TrimSlashes(dir)}`;

@@ -165,6 +165,14 @@ export class FormFirebaseFileComponent extends FormBase<FormFileObject>
     this.destroyed.next();
   }
 
+  writeValue(value) {
+    if (typeof value === 'object') {
+      this.value = value;
+    } else {
+      this.value = null;
+    }
+  }
+
   onImageClicked($event, imageurl: string) {
     $event.preventDefault();
     $event.stopPropagation();
@@ -189,7 +197,7 @@ export class FormFirebaseFileComponent extends FormBase<FormFileObject>
     );
     this.um.$currentFiles.pipe(takeUntil(this.destroyed)).subscribe(vals => {
       if (Array.isArray(vals)) {
-        this.value = vals[0];
+        this.value = [...vals].pop();
       }
     });
   }
