@@ -32,64 +32,32 @@ import { PreviewImagePopupComponent } from '../subcomponents/preview-images/comp
         (drop)="isDraggingOnTop = false; onFileDrop($event)"
       >
         <input
-          class="hidden"
-          placeholder="placeholder"
+          [hidden]="true"
+          [placeholder]="placeholder"
           type="file"
           [disabled]="disabled"
           (change)="onFileInputChange($event)"
           [accept]="config?.acceptedFiles || 'image/*'"
         />
         <p class="upload-message">{{ uploadMessage }}</p>
-        <div
-          class="flex-h max-width justify-around"
-          *ngIf="value?.imageurl as imageurl"
-        >
-          <div *ngIf="!hasLoaded && !hasError">
-            <div class="margin10">
-              <mat-progress-spinner [diameter]="90" mode="indeterminate">
-              </mat-progress-spinner>
-            </div>
-          </div>
-          <div class="relative" [hidden]="!hasLoaded && !hasError">
-            <button
-              mat-mini-fab
-              color="secondary"
-              class="remove-btn"
-              [disabled]="disabled"
-              (click)="clickRemoveTag(value)"
-              matTooltip="Click to replace current image"
-            >
-              <mat-icon>
-                swap_horiz
-              </mat-icon>
-            </button>
-            <img
-              #img
-              class="file-thumb has-pointer"
-              matTooltip="Click to preview image"
-              (click)="onImageClicked($event, imageurl)"
-              [src]="imageurl"
-              (load)="hasLoaded = true"
-              (error)="hasError = true"
-            />
-          </div>
-        </div>
-        <div
-          class="full-width"
-          *ngIf="(this.uploadStatusChanged | async) == true && value"
-        >
-          <mat-progress-bar
-            class="progress"
-            mode="determinate"
-            [value]="value?.value?.props?.progress"
-          ></mat-progress-bar>
-        </div>
       </label>
+      <div class="relative" *ngIf="value?.id">
+        <lib-uploaded-files-list
+          placeholder="Uploaded:"
+          [disabled]="disabled"
+          [uploadedFiles]="[value]"
+          (clickRemoveTag)="this.clickRemoveTag($event)"
+        >
+        </lib-uploaded-files-list>
+      </div>
     </div>
     <pre></pre>
   `,
   styles: [
     `
+      .margin10 {
+        margin: 10px;
+      }
       .relative {
         position: relative;
       }
@@ -119,16 +87,12 @@ import { PreviewImagePopupComponent } from '../subcomponents/preview-images/comp
         display: inline-block;
         border: 4px dashed #ccc;
         background: transparent;
-        padding: 10px;
+        padding: 50px 0px;
         cursor: pointer;
         width: calc(100% - 8px - 20px);
-        min-height: 200px;
       }
       .dragover {
         background: #ddd;
-      }
-      .hidden {
-        display: none;
       }
       .justify-around {
         justify-content: space-around;
@@ -164,9 +128,9 @@ import { PreviewImagePopupComponent } from '../subcomponents/preview-images/comp
 export class FormFirebaseFileComponent extends FormBase<FormFileObject>
   implements OnInit, OnDestroy {
   @Input()
-  placeholder = 'Attached Files';
+  placeholder = 'Uploaded File';
   @Input()
-  uploadMessage = 'Upload an Image Here';
+  uploadMessage = 'Upload a File Here';
 
   private _config: FormFirebaseFileConfiguration;
   @Input()
@@ -176,11 +140,6 @@ export class FormFirebaseFileComponent extends FormBase<FormFileObject>
   }
   get config() {
     return this._config;
-  }
-
-  get isConfigLoaded(): boolean {
-    const c = this.config;
-    return !!c && !!c.directory && (!!c.firebaseApp || !!c.firebaseConfig);
   }
 
   // tslint:disable-next-line: no-output-on-prefix

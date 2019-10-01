@@ -32,7 +32,7 @@ import { FormFirebaseImageConfiguration } from '../FormFirebaseFileConfiguration
         (drop)="isDraggingOnTop = false; onFileDrop($event)"
       >
         <input
-          class="hidden"
+          [hidden]="true"
           placeholder="placeholder"
           type="file"
           [disabled]="disabled"
@@ -125,9 +125,6 @@ import { FormFirebaseImageConfiguration } from '../FormFirebaseFileConfiguration
       }
       .dragover {
         background: #ddd;
-      }
-      .hidden {
-        display: none;
       }
       .justify-around {
         justify-content: space-around;

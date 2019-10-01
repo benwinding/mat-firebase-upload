@@ -32,7 +32,7 @@ import { FormFirebaseFilesConfiguration } from '../FormFirebaseFileConfiguration
       >
         <input
           *ngIf="isMultiple"
-          class="hidden"
+          [hidden]="true"
           type="file"
           multiple
           [disabled]="disabled || maxReached"
@@ -41,7 +41,7 @@ import { FormFirebaseFilesConfiguration } from '../FormFirebaseFileConfiguration
         />
         <input
           *ngIf="!isMultiple"
-          class="hidden"
+          [hidden]="true"
           type="file"
           [disabled]="disabled || maxReached"
           (change)="onFileInputChange($event)"
@@ -86,9 +86,6 @@ import { FormFirebaseFilesConfiguration } from '../FormFirebaseFileConfiguration
       }
       .dragover {
         background: #ddd;
-      }
-      .hidden {
-        display: none;
       }
       .max-files {
         font-size: 0.9em;

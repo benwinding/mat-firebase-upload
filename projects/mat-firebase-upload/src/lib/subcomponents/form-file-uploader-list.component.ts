@@ -6,7 +6,7 @@ import { PreviewImagePopupComponent } from './preview-images/components/preview-
 @Component({
   selector: 'lib-uploaded-files-list',
   template: `
-    <p *ngIf="uploadedFiles?.length">Uploaded files:</p>
+    <p *ngIf="uploadedFiles?.length">{{placeholder}}</p>
     <div>
       <div *ngFor="let file of uploadedFiles">
         <div class="full-width flex-h justify-between">
@@ -100,6 +100,8 @@ import { PreviewImagePopupComponent } from './preview-images/components/preview-
   ]
 })
 export class FormFileUploadedFileListComponent {
+  @Input()
+  placeholder = 'Uploaded Files:';
   @Input()
   disabled: boolean;
   @Input()
