@@ -7,6 +7,7 @@ export interface FormFirebaseConfigurationBase {
   imageCompressionMaxSize?: number;
   acceptedFiles?: 'image/*' | 'application/pdf' | 'image/*,application/*' |  string;
   useUuidName?: boolean;
+  deleteOnStorage?: boolean;
 }
 
 export type FormFirebaseImageConfiguration = FormFirebaseConfigurationBase;

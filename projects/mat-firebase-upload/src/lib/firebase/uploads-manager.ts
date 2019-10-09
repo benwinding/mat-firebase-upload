@@ -123,6 +123,9 @@ export class UploadsManager implements IUploadsManager {
     const filteredFiles = currentFiles.filter(f => f.id !== fileObject.id);
     console.log('form-files: clickRemoveTag', { currentFiles, filteredFiles });
     this._$trackedFiles.next(filteredFiles);
+    if (!this.config.deleteOnStorage) {
+      return;
+    }
     if (fileObject.bucket_path) {
       try {
         await this.storage.refFromURL(fileObject.bucket_path).delete();
