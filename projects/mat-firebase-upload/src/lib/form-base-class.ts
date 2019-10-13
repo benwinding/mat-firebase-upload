@@ -3,7 +3,8 @@ import { Subject } from 'rxjs';
 import { OnDestroy, OnInit, Input } from '@angular/core';
 import { takeUntil, auditTime } from 'rxjs/operators';
 import { ConvertToTitleCase } from './utils/case-helper';
-import {v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
+import { SimpleLogger } from './utils/simple-logger';
 
 export class FormBase<T>
   implements OnInit, OnDestroy, ControlValueAccessor, Validator {
@@ -20,6 +21,10 @@ export class FormBase<T>
   formControlName: string;
   @Input()
   placeholder: string;
+  @Input()
+  debug: boolean;
+
+  logger: SimpleLogger;
 
   constructor() {
     // Garrentee that init and destroy are called
@@ -36,18 +41,20 @@ export class FormBase<T>
     };
   }
 
+  // These will most likely be overriden
   ngOnInit() {}
-
   ngOnDestroy() {}
 
   init() {
+    this.logger = new SimpleLogger(this.debug, '[form-base-class]');
     this._destroyed.next();
     this.autoCompleteObscureName = uuidv4();
     this.internalControl.valueChanges
       .pipe(takeUntil(this._destroyed))
       .pipe(auditTime(100))
-      .subscribe(() => {
-        this._value = this.internalControl.value;
+      .subscribe((value) => {
+        this._value = value;
+        console.log('internalControl.valueChanges()', {value});
         this.onChange(this._value);
         this.onTouched();
         // console.log('form-base-class: valueChanges', {val: this._value});
@@ -67,9 +74,10 @@ export class FormBase<T>
     return this._value;
   }
 
-  set value(val) {
-    this._value = val;
-    this.internalControl.setValue(val);
+  set value(value) {
+    console.log('this.set value()', {value});
+    this._value = value;
+    this.internalControl.setValue(value, { emitEvent: true });
   }
 
   writeValue(value: any): void {

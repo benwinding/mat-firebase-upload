@@ -10,13 +10,14 @@ import {
 import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 import { FormFileObject } from '../FormFileObject';
 import { Subject } from 'rxjs';
-import { takeUntil, map } from 'rxjs/operators';
+import { takeUntil, map, tap } from 'rxjs/operators';
 import { FormBase } from '../form-base-class';
 import { NotificationService } from '../utils/notification.service';
 import { MatDialog } from '@angular/material';
 import { PreviewImagePopupComponent } from '../subcomponents/preview-images/components/preview-image-popup.component';
 import { UploadsManager } from '../firebase/uploads-manager';
 import { FormFirebaseImageConfiguration } from '../FormFirebaseFileConfiguration';
+import { SimpleLogger } from '../utils/simple-logger';
 
 @Component({
   // tslint:disable-next-line: component-selector
@@ -203,7 +204,36 @@ export class FormFirebaseImageComponent extends FormBase<FormFileObject>
 
   ngOnInit() {}
   ngOnDestroy() {
+    this.destroyUploadManager();
+  }
+
+  destroyUploadManager() {
     this.destroyed.next();
+    if (this.um) {
+      this.um.onDestroy();
+    }
+  }
+
+  initUploadManager() {
+    this.logger = new SimpleLogger(this.debug, '[form-firebase-image]');
+    this.destroyUploadManager();
+    const $internalChangesTap = this.internalControl.valueChanges.pipe(
+      takeUntil(this.destroyed),
+      tap(files => this.logger.log('$internalChangesTap', {files})),
+      map(file => [file])
+    );
+    this.um = new UploadsManager(
+      this.config,
+      this.ns,
+      this.uploadStatusChanged,
+      $internalChangesTap,
+      this.logger
+    );
+    this.um.$currentFiles.pipe(takeUntil(this.destroyed)).subscribe(vals => {
+      if (Array.isArray(vals)) {
+        this.value = [...vals].pop();
+      }
+    });
   }
 
   onImageClicked($event, imageurl: string) {
@@ -213,25 +243,6 @@ export class FormFirebaseImageComponent extends FormBase<FormFileObject>
       data: imageurl,
       hasBackdrop: true,
       disableClose: false
-    });
-  }
-
-  initUploadManager() {
-    this.ngOnDestroy();
-    const $internalChangesTap = this.internalControl.valueChanges.pipe(
-      takeUntil(this.destroyed),
-      map(file => [file])
-    );
-    this.um = new UploadsManager(
-      this.config,
-      this.ns,
-      this.uploadStatusChanged,
-      $internalChangesTap
-    );
-    this.um.$currentFiles.pipe(takeUntil(this.destroyed)).subscribe(vals => {
-      if (Array.isArray(vals)) {
-        this.value = [...vals].pop();
-      }
     });
   }
 

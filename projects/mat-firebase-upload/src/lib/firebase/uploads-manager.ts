@@ -1,5 +1,5 @@
 import { timer, Subject, BehaviorSubject, Observable } from 'rxjs';
-import { takeUntil, take, tap, filter, delay } from 'rxjs/operators';
+import { takeUntil, take, tap, delay } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 import 'firebase/storage';
 import { FormFirebaseConfigurationBase } from '../FormFirebaseFileConfiguration';
@@ -15,6 +15,7 @@ import {
 } from '../utils';
 import { EventEmitter } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
+import { SimpleLogger } from '../utils/simple-logger';
 
 export interface IUploadsManager {
   $currentFiles: Observable<FormFileObject[]>;
@@ -24,12 +25,10 @@ export interface IUploadsManager {
 }
 
 export class UploadsManager implements IUploadsManager {
-  private _$files = new BehaviorSubject<FormFileObject[]>(null);
-  public get $currentFiles() {
-    return this._$files.asObservable();
-  }
+  public $currentFiles = new BehaviorSubject<FormFileObject[]>(null);
 
-  private _$trackedFiles = new BehaviorSubject<FormFileObject[]>(null);
+  private trackedFiles: FormFileObject[] = [];
+
   private storage: firebase.storage.Storage;
   private destroyed = new Subject();
 
@@ -37,32 +36,45 @@ export class UploadsManager implements IUploadsManager {
     private config: FormFirebaseConfigurationBase,
     private ns: NotificationService,
     private uploadStatusChanged: EventEmitter<boolean>,
-    private $formChanges: Observable<FormFileObject[]>
+    $incomingChanges: Observable<FormFileObject[]>,
+    private logger: SimpleLogger
   ) {
     this.initFirebase();
     // Update tracked files from form changes
     let updateLock = false;
-    $formChanges
+    $incomingChanges
       .pipe(
         takeUntil(this.destroyed),
+        tap(files => this.updatesFromExternal(files)),
         tap(() => (updateLock = true)),
-        tap(files => this._$trackedFiles.next(files)),
         delay(1),
         tap(() => (updateLock = false))
       )
       .subscribe();
-    // Update external from tracked files
-    this._$trackedFiles
-      .pipe(
-        takeUntil(this.destroyed),
-        filter(() => !updateLock),
-        tap(files => this._$files.next(files))
-      )
-      .subscribe();
+    $incomingChanges
+      .pipe(take(1))
+      .subscribe(files => this.updatesFromExternal(files));
   }
 
   public onDestroy() {
     this.destroyed.next();
+  }
+
+  private updatesFromExternal(files: FormFileObject[]) {
+    this.logger.log('um: updatesFromExternal', { files });
+    this.trackedFiles = files;
+  }
+
+  private updatesFromInternal(files: FormFileObject[], sendUpdate?: boolean) {
+    this.logger.log('um: updatesFromInternal', { files });
+    if (!Array.isArray(files)) {
+      this.trackedFiles = [];
+      return;
+    }
+    this.trackedFiles = files;
+    if (sendUpdate) {
+      this.$currentFiles.next(this.trackedFiles);
+    }
   }
 
   initFirebase() {
@@ -122,7 +134,7 @@ export class UploadsManager implements IUploadsManager {
     const currentFiles = this.getCurrentFiles();
     const filteredFiles = currentFiles.filter(f => f.id !== fileObject.id);
     console.log('form-files: clickRemoveTag', { currentFiles, filteredFiles });
-    this._$trackedFiles.next(filteredFiles);
+    this.updatesFromInternal(filteredFiles, true);
     if (!this.config.deleteOnStorage) {
       return;
     }
@@ -205,7 +217,7 @@ export class UploadsManager implements IUploadsManager {
     };
     const currentFiles = this.getCurrentFiles();
     currentFiles.push(newFile);
-    this._$trackedFiles.next(currentFiles);
+    this.updatesFromInternal(currentFiles, true);
   }
 
   private async parseAndCompress(file): Promise<File> {
@@ -294,11 +306,11 @@ export class UploadsManager implements IUploadsManager {
       file.imageurl = url;
     }
     file.value.props.completed = true;
-    this._$trackedFiles.next(currentFiles);
+    this.updatesFromInternal(currentFiles, true);
   }
 
   getCurrentFiles(): FormFileObject[] {
-    let allFiles = this._$trackedFiles.getValue();
+    let allFiles = this.trackedFiles;
     if (!Array.isArray(allFiles)) {
       allFiles = [];
     }

@@ -17,6 +17,7 @@ import { UploadsManager } from '../firebase/uploads-manager';
 import { takeUntil, map } from 'rxjs/operators';
 import { FormFirebaseFileConfiguration } from '../FormFirebaseFileConfiguration';
 import { PreviewImagePopupComponent } from '../subcomponents/preview-images/components/preview-image-popup.component';
+import { SimpleLogger } from '../utils/simple-logger';
 
 @Component({
   // tslint:disable-next-line: component-selector
@@ -159,10 +160,35 @@ export class FormFirebaseFileComponent extends FormBase<FormFileObject>
 
   ngOnInit() {}
   ngOnDestroy() {
+    this.destroyUploadManager();
+  }
+
+  destroyUploadManager() {
+    this.destroyed.next();
     if (this.um) {
       this.um.onDestroy();
     }
-    this.destroyed.next();
+  }
+
+  initUploadManager() {
+    this.logger = new SimpleLogger(this.debug, '[form-firebase-file]');
+    this.destroyUploadManager();
+    const $internalChangesTap = this.internalControl.valueChanges.pipe(
+      takeUntil(this.destroyed),
+      map(file => [file])
+    );
+    this.um = new UploadsManager(
+      this.config,
+      this.ns,
+      this.uploadStatusChanged,
+      $internalChangesTap,
+      this.logger
+    );
+    this.um.$currentFiles.pipe(takeUntil(this.destroyed)).subscribe(vals => {
+      if (Array.isArray(vals)) {
+        this.value = [...vals].pop();
+      }
+    });
   }
 
   writeValue(value) {
@@ -180,25 +206,6 @@ export class FormFirebaseFileComponent extends FormBase<FormFileObject>
       data: imageurl,
       hasBackdrop: true,
       disableClose: false
-    });
-  }
-
-  initUploadManager() {
-    this.ngOnDestroy();
-    const $internalChangesTap = this.internalControl.valueChanges.pipe(
-      takeUntil(this.destroyed),
-      map(file => [file])
-    );
-    this.um = new UploadsManager(
-      this.config,
-      this.ns,
-      this.uploadStatusChanged,
-      $internalChangesTap
-    );
-    this.um.$currentFiles.pipe(takeUntil(this.destroyed)).subscribe(vals => {
-      if (Array.isArray(vals)) {
-        this.value = [...vals].pop();
-      }
     });
   }
 

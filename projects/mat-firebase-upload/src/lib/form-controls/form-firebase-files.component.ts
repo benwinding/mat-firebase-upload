@@ -11,12 +11,13 @@ import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
 import { FormFileObject } from '../FormFileObject';
 import * as firebase from 'firebase/app';
 import 'firebase/storage';
-import { Subject } from 'rxjs';
-import { takeUntil, tap, delay, filter } from 'rxjs/operators';
+import { Subject, Observable } from 'rxjs';
+import { takeUntil, tap } from 'rxjs/operators';
 import { FormBase } from '../form-base-class';
 import { NotificationService } from '../utils/notification.service';
 import { UploadsManager } from '../firebase/uploads-manager';
 import { FormFirebaseFilesConfiguration } from '../FormFirebaseFileConfiguration';
+import { SimpleLogger } from '../utils/simple-logger';
 
 @Component({
   // tslint:disable-next-line: component-selector
@@ -140,6 +141,8 @@ export class FormFirebaseFilesComponent extends FormBase<FormFileObject[]>
   isDraggingOnTop = false;
   private um: UploadsManager;
 
+  $formChanges: Observable<FormFileObject[]>;
+
   constructor(public ns: NotificationService) {
     super();
   }
@@ -153,22 +156,34 @@ export class FormFirebaseFilesComponent extends FormBase<FormFileObject[]>
 
   ngOnInit() {}
   ngOnDestroy() {
+    this.destroyUploadManager();
+  }
+
+  destroyUploadManager() {
     this.destroyed.next();
+    if (this.um) {
+      this.um.onDestroy();
+    }
   }
 
   initUploadManager() {
-    this.ngOnDestroy();
-    const $internalChangesTap = this.internalControl.valueChanges.pipe(
-      takeUntil(this.destroyed)
+    this.$formChanges = this.internalControl.valueChanges.pipe(
+      tap(values =>
+        this.logger.log('files.valueChanges', { values, thisValue: this.value })
+      )
     );
+    this.logger = new SimpleLogger(this.debug, '[form-firebase-files]');
+    this.destroyUploadManager();
     this.um = new UploadsManager(
       this.config,
       this.ns,
       this.uploadStatusChanged,
-      $internalChangesTap
+      this.$formChanges,
+      this.logger
     );
-    this.um.$currentFiles.pipe(takeUntil(this.destroyed)).subscribe(vals => {
-      this.value = vals;
+    this.um.$currentFiles.pipe(takeUntil(this.destroyed)).subscribe(value => {
+      this.logger.log('um.$currentFiles', { value });
+      this.writeValue(value);
     });
   }
 
