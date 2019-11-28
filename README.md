@@ -1,27 +1,80 @@
-# MatWrapped
+# mat-firebase-upload
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.3.9.
+An easy to use upload dropzone.
 
-## Development server
+<img src="https://i.imgur.com/bIy6Bzy.png" style="max-width: 100%;" alt="demo" />
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+- Angular 2+
+- Material themed
+- Firebase storage
 
-## Code scaffolding
+## Basic Example
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+_Component HTML_
+``` html
+<form-firebase-file 
+  [formControl]="controlFile" 
+  [config]="config"
+>
+</form-firebase-file>
+```
+_Component Typescript_
 
-## Build
+``` ts
+...
+  controlFile = new FormControl();
+  config = {
+    directory: `path/to/upload/to`,
+    firebaseConfig: environment.firebaseConfig,
+  };
+...
+```
+_angular.json_
+``` json
+"my-project": {
+  ...,
+  "architect": {
+    "build": {
+      ...,
+      "options": {
+        ...,
+        "assets": [
+          ...,
+          {
+            "glob": "**/*",
+            "input": "node_modules/mat-firebase-upload/assets",
+            "output": "./assets/fileicons"
+          }
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+## Advanced Options
 
-## Running unit tests
+_Component HTML_
+``` html
+<form-firebase-file 
+  [formControl]="controlFile" 
+  [config]="config"
+  placeholder="Drop files here!"
+>
+</form-firebase-file>
+```
+_Component Typescript_
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+``` ts
+...
+  controlFile = new FormControl();
+  config: FormFirebaseFilesConfiguration = {
+    directory: `audits/somelocation`,
+    firebaseConfig: environment.firebaseConfig,
 
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+    bucketname: 'my-other-bucket-name.appspot.com',
+    firebaseApp: app,
+    imageCompressionQuality: 0.8,
+    imageCompressionMaxSize: 2000,
+    acceptedFiles: 'image/*',
+    useUuidName: true,
+    deleteOnStorage: true
+  };
+...
+```
+More details in the [Type definitions](https://github.com/benwinding/mat-firebase-upload)!
