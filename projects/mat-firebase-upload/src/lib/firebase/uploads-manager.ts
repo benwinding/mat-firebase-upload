@@ -175,7 +175,7 @@ export class UploadsManager implements IUploadsManager {
     const fullPath = `${TrimSlashes(dirPath)}/${uniqueFileName}`;
     console.log('beginUploadTask()', { fileData: file, bucketPath, fullPath });
     let fileParsed;
-    if (file.type === 'image/*') {
+    if (file.type.includes('image/')) {
       fileParsed = await this.parseAndCompress(file);
     } else {
       fileParsed = file;
