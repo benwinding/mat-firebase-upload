@@ -6,22 +6,22 @@ import {
   Input,
   Output,
   EventEmitter
-} from '@angular/core';
-import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
-import { FormFileObject } from '../FormFileObject';
-import * as firebase from 'firebase/app';
-import 'firebase/storage';
-import { Subject, Observable } from 'rxjs';
-import { takeUntil, tap } from 'rxjs/operators';
-import { FormBase } from '../form-base-class';
-import { NotificationService } from '../utils/notification.service';
-import { UploadsManager } from '../firebase/uploads-manager';
-import { FormFirebaseFilesConfiguration } from '../FormFirebaseFileConfiguration';
-import { SimpleLogger } from '../utils/simple-logger';
+} from "@angular/core";
+import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from "@angular/forms";
+import { FormFileObject } from "../FormFileObject";
+import * as firebase from "firebase/app";
+import "firebase/storage";
+import { Subject, Observable } from "rxjs";
+import { takeUntil, tap } from "rxjs/operators";
+import { FormBase } from "../form-base-class";
+import { NotificationService } from "../utils/notification.service";
+import { UploadsManager } from "../firebase/uploads-manager";
+import { FormFirebaseFilesConfiguration } from "../FormFirebaseFileConfiguration";
+import { SimpleLogger } from "../utils/simple-logger";
 
 @Component({
   // tslint:disable-next-line: component-selector
-  selector: 'form-firebase-files',
+  selector: "form-firebase-files",
   template: `
     <div>
       <label
@@ -116,7 +116,7 @@ import { SimpleLogger } from '../utils/simple-logger';
 export class FormFirebaseFilesComponent extends FormBase<FormFileObject[]>
   implements OnInit, OnDestroy {
   @Input()
-  placeholder = 'upload here';
+  placeholder = "upload here";
 
   private _config: FormFirebaseFilesConfiguration;
   @Input()
@@ -167,22 +167,24 @@ export class FormFirebaseFilesComponent extends FormBase<FormFileObject[]>
   }
 
   initUploadManager() {
+    this.logger = new SimpleLogger(this.debug, "[form-firebase-files]");
     this.$formChanges = this.internalControl.valueChanges.pipe(
       tap(values =>
-        this.logger.log('files.valueChanges', { values, thisValue: this.value })
+        this.logger.log("files.valueChanges", { values, thisValue: this.value })
       )
     );
-    this.logger = new SimpleLogger(this.debug, '[form-firebase-files]');
     this.destroyUploadManager();
+    this.logger.log("before new UploadsManager()", { value: this.value });
     this.um = new UploadsManager(
       this.config,
       this.ns,
       this.uploadStatusChanged,
       this.$formChanges,
+      this.value,
       this.logger
     );
     this.um.$currentFiles.pipe(takeUntil(this.destroyed)).subscribe(value => {
-      this.logger.log('um.$currentFiles', { value });
+      this.logger.log("um.$currentFiles", { value });
       this.writeValue(value);
     });
   }

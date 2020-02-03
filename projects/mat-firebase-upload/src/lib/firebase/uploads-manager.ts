@@ -1,5 +1,5 @@
 import { timer, Subject, BehaviorSubject, Observable } from 'rxjs';
-import { takeUntil, take, tap, delay } from 'rxjs/operators';
+import { takeUntil, take, tap } from 'rxjs/operators';
 import * as firebase from 'firebase/app';
 import 'firebase/storage';
 import { FormFirebaseConfigurationBase } from '../FormFirebaseFileConfiguration';
@@ -37,23 +37,19 @@ export class UploadsManager implements IUploadsManager {
     private ns: NotificationService,
     private uploadStatusChanged: EventEmitter<boolean>,
     $incomingChanges: Observable<FormFileObject[]>,
+    initialFiles: FormFileObject[],
     private logger: SimpleLogger
   ) {
     this.initFirebase();
+
+    this.updatesFromInternal(initialFiles, true);
     // Update tracked files from form changes
-    let updateLock = false;
     $incomingChanges
       .pipe(
         takeUntil(this.destroyed),
         tap(files => this.updatesFromExternal(files)),
-        tap(() => (updateLock = true)),
-        delay(1),
-        tap(() => (updateLock = false))
       )
       .subscribe();
-    $incomingChanges
-      .pipe(take(1))
-      .subscribe(files => this.updatesFromExternal(files));
   }
 
   public onDestroy() {

@@ -27,7 +27,7 @@ export function blankFile2(): FormFileObject {
 
 export async function makeConfig(ms?: number) {
   if (ms) {
-    await new Promise(resolve => setTimeout(() => resolve(), ms));
+    await delay(ms);
   }
   const config: FormFirebaseConfigurationBase = {
     directory: `audits/somelocation`,
@@ -38,4 +38,8 @@ export async function makeConfig(ms?: number) {
     imageCompressionQuality: 0.9
   };
   return config;
+}
+
+export async function delay(ms: number) {
+  await new Promise(resolve => setTimeout(resolve, ms));
 }
