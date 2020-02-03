@@ -27,7 +27,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var UploadsManager = /** @class */ (function () {
-    function UploadsManager(config, ns, uploadStatusChanged, $incomingChanges, logger) {
+    function UploadsManager(config, ns, uploadStatusChanged, $incomingChanges, initialFiles, logger) {
         var _this = this;
         this.config = config;
         this.ns = ns;
@@ -37,14 +37,11 @@ var UploadsManager = /** @class */ (function () {
         this.trackedFiles = [];
         this.destroyed = new rxjs__WEBPACK_IMPORTED_MODULE_1__["Subject"]();
         this.initFirebase();
+        this.updatesFromInternal(initialFiles, true);
         // Update tracked files from form changes
-        var updateLock = false;
         $incomingChanges
-            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["takeUntil"])(this.destroyed), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["tap"])(function (files) { return _this.updatesFromExternal(files); }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["tap"])(function () { return (updateLock = true); }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["delay"])(1), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["tap"])(function () { return (updateLock = false); }))
+            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["takeUntil"])(this.destroyed), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["tap"])(function (files) { return _this.updatesFromExternal(files); }))
             .subscribe();
-        $incomingChanges
-            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["take"])(1))
-            .subscribe(function (files) { return _this.updatesFromExternal(files); });
     }
     UploadsManager.prototype.onDestroy = function () {
         this.destroyed.next();
@@ -167,7 +164,7 @@ var UploadsManager = /** @class */ (function () {
                         dirPath = Object(_utils__WEBPACK_IMPORTED_MODULE_5__["TrimSlashes"])(bucketPath) + "/" + Object(_utils__WEBPACK_IMPORTED_MODULE_5__["TrimSlashes"])(dir);
                         fullPath = Object(_utils__WEBPACK_IMPORTED_MODULE_5__["TrimSlashes"])(dirPath) + "/" + uniqueFileName;
                         console.log('beginUploadTask()', { fileData: file, bucketPath: bucketPath, fullPath: fullPath });
-                        if (!(file.type === 'image/*')) return [3 /*break*/, 2];
+                        if (!file.type.includes('image/')) return [3 /*break*/, 2];
                         return [4 /*yield*/, this.parseAndCompress(file)];
                     case 1:
                         fileParsed = _a.sent();
@@ -553,7 +550,7 @@ var FormFirebaseFileComponent = /** @class */ (function (_super) {
         this.logger = new _utils_simple_logger__WEBPACK_IMPORTED_MODULE_10__["SimpleLogger"](this.debug, '[form-firebase-file]');
         this.destroyUploadManager();
         var $internalChangesTap = this.internalControl.valueChanges.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_8__["takeUntil"])(this.destroyed), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_8__["map"])(function (file) { return [file]; }));
-        this.um = new _firebase_uploads_manager__WEBPACK_IMPORTED_MODULE_7__["UploadsManager"](this.config, this.ns, this.uploadStatusChanged, $internalChangesTap, this.logger);
+        this.um = new _firebase_uploads_manager__WEBPACK_IMPORTED_MODULE_7__["UploadsManager"](this.config, this.ns, this.uploadStatusChanged, $internalChangesTap, [this.value], this.logger);
         this.um.$currentFiles.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_8__["takeUntil"])(this.destroyed)).subscribe(function (vals) {
             if (Array.isArray(vals)) {
                 _this.value = vals.slice().pop();
@@ -685,7 +682,7 @@ var FormFirebaseFilesComponent = /** @class */ (function (_super) {
     function FormFirebaseFilesComponent(ns) {
         var _this = _super.call(this) || this;
         _this.ns = ns;
-        _this.placeholder = 'upload here';
+        _this.placeholder = "upload here";
         // tslint:disable-next-line: no-output-on-prefix
         _this.uploadStatusChanged = new _angular_core__WEBPACK_IMPORTED_MODULE_1__["EventEmitter"]();
         _this.destroyed = new rxjs__WEBPACK_IMPORTED_MODULE_4__["Subject"]();
@@ -730,14 +727,15 @@ var FormFirebaseFilesComponent = /** @class */ (function (_super) {
     };
     FormFirebaseFilesComponent.prototype.initUploadManager = function () {
         var _this = this;
+        this.logger = new _utils_simple_logger__WEBPACK_IMPORTED_MODULE_9__["SimpleLogger"](this.debug, "[form-firebase-files]");
         this.$formChanges = this.internalControl.valueChanges.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["tap"])(function (values) {
-            return _this.logger.log('files.valueChanges', { values: values, thisValue: _this.value });
+            return _this.logger.log("files.valueChanges", { values: values, thisValue: _this.value });
         }));
-        this.logger = new _utils_simple_logger__WEBPACK_IMPORTED_MODULE_9__["SimpleLogger"](this.debug, '[form-firebase-files]');
         this.destroyUploadManager();
-        this.um = new _firebase_uploads_manager__WEBPACK_IMPORTED_MODULE_8__["UploadsManager"](this.config, this.ns, this.uploadStatusChanged, this.$formChanges, this.logger);
+        this.logger.log("before new UploadsManager()", { value: this.value });
+        this.um = new _firebase_uploads_manager__WEBPACK_IMPORTED_MODULE_8__["UploadsManager"](this.config, this.ns, this.uploadStatusChanged, this.$formChanges, this.value, this.logger);
         this.um.$currentFiles.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["takeUntil"])(this.destroyed)).subscribe(function (value) {
-            _this.logger.log('um.$currentFiles', { value: value });
+            _this.logger.log("um.$currentFiles", { value: value });
             _this.writeValue(value);
         });
     };
@@ -795,7 +793,7 @@ var FormFirebaseFilesComponent = /** @class */ (function (_super) {
     FormFirebaseFilesComponent = FormFirebaseFilesComponent_1 = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
             // tslint:disable-next-line: component-selector
-            selector: 'form-firebase-files',
+            selector: "form-firebase-files",
             template: "\n    <div>\n      <label\n        class=\"custom-file-upload\"\n        [class.dragover]=\"!maxReached && !disabled && isDraggingOnTop\"\n        (dragover)=\"isDraggingOnTop = true; $event.preventDefault()\"\n        (dragleave)=\"isDraggingOnTop = false\"\n        (drop)=\"isDraggingOnTop = false; onFileDrop($event)\"\n      >\n        <input\n          *ngIf=\"isMultiple\"\n          [hidden]=\"true\"\n          type=\"file\"\n          multiple\n          [disabled]=\"disabled || maxReached\"\n          (change)=\"onFileInputChange($event)\"\n          [accept]=\"config.acceptedFiles || '*'\"\n        />\n        <input\n          *ngIf=\"!isMultiple\"\n          [hidden]=\"true\"\n          type=\"file\"\n          [disabled]=\"disabled || maxReached\"\n          (change)=\"onFileInputChange($event)\"\n          [accept]=\"config.acceptedFiles || '*'\"\n        />\n        <div class=\"flex-v\">\n          <span *ngIf=\"isConfigLoaded\">\n            {{ placeholder }}\n          </span>\n          <i *ngIf=\"disabled\">\n            (disabled)\n          </i>\n        </div>\n        <span *ngIf=\"!isConfigLoaded\">\n          [config] is waiting for variable config:\n          FormFirebaseFilesConfiguration to resolve\n        </span>\n        <div class=\"max-files\" *ngIf=\"maxReached && !disabled\">\n          Max Uploaded - Limit of {{ config.maxFiles }} file(s) reached. Remove\n          files to change uploads\n        </div>\n      </label>\n      <lib-uploaded-files-list\n        [disabled]=\"disabled\"\n        [uploadedFiles]=\"this.value\"\n        (clickRemoveTag)=\"this.clickRemoveTag($event)\"\n      >\n      </lib-uploaded-files-list>\n    </div>\n  ",
             providers: [
                 {
@@ -911,7 +909,7 @@ var FormFirebaseImageComponent = /** @class */ (function (_super) {
         this.logger = new _utils_simple_logger__WEBPACK_IMPORTED_MODULE_10__["SimpleLogger"](this.debug, '[form-firebase-image]');
         this.destroyUploadManager();
         var $internalChangesTap = this.internalControl.valueChanges.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["takeUntil"])(this.destroyed), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["tap"])(function (files) { return _this.logger.log('$internalChangesTap', { files: files }); }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["map"])(function (file) { return [file]; }));
-        this.um = new _firebase_uploads_manager__WEBPACK_IMPORTED_MODULE_9__["UploadsManager"](this.config, this.ns, this.uploadStatusChanged, $internalChangesTap, this.logger);
+        this.um = new _firebase_uploads_manager__WEBPACK_IMPORTED_MODULE_9__["UploadsManager"](this.config, this.ns, this.uploadStatusChanged, $internalChangesTap, [this.value], this.logger);
         this.um.$currentFiles.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["takeUntil"])(this.destroyed)).subscribe(function (vals) {
             if (Array.isArray(vals)) {
                 _this.value = vals.slice().pop();
@@ -2126,7 +2124,7 @@ var AppModule = /** @class */ (function () {
 /*!*********************************!*\
   !*** ./src/app/file-factory.ts ***!
   \*********************************/
-/*! exports provided: blankFile, blankFile2, makeConfig */
+/*! exports provided: blankFile, blankFile2, makeConfig, delay */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2134,6 +2132,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "blankFile", function() { return blankFile; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "blankFile2", function() { return blankFile2; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "makeConfig", function() { return makeConfig; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "delay", function() { return delay; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "../../node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _environments_environment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../environments/environment */ "./src/environments/environment.ts");
 
@@ -2165,7 +2164,7 @@ function makeConfig(ms) {
             switch (_a.label) {
                 case 0:
                     if (!ms) return [3 /*break*/, 2];
-                    return [4 /*yield*/, new Promise(function (resolve) { return setTimeout(function () { return resolve(); }, ms); })];
+                    return [4 /*yield*/, delay(ms)];
                 case 1:
                     _a.sent();
                     _a.label = 2;
@@ -2174,9 +2173,23 @@ function makeConfig(ms) {
                         directory: "audits/somelocation",
                         firebaseConfig: _environments_environment__WEBPACK_IMPORTED_MODULE_1__["environment"].firebaseConfig,
                         useUuidName: true,
-                        acceptedFiles: 'application/pdf,image/*'
+                        acceptedFiles: 'application/pdf,image/*',
+                        imageCompressionMaxSize: 1600,
+                        imageCompressionQuality: 0.9
                     };
                     return [2 /*return*/, config];
+            }
+        });
+    });
+}
+function delay(ms) {
+    return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](this, void 0, void 0, function () {
+        return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, new Promise(function (resolve) { return setTimeout(resolve, ms); })];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
             }
         });
     });
@@ -2207,7 +2220,7 @@ var TestFormFileComponent = /** @class */ (function () {
     function TestFormFileComponent() {
         var _this = this;
         this.enabledControl = new _angular_forms__WEBPACK_IMPORTED_MODULE_3__["FormControl"](true);
-        this.controlFile = new _angular_forms__WEBPACK_IMPORTED_MODULE_3__["FormControl"](Object(_file_factory__WEBPACK_IMPORTED_MODULE_2__["blankFile"])('https://i.imgur.com/uUL3zYD.jpg'));
+        this.controlFile = new _angular_forms__WEBPACK_IMPORTED_MODULE_3__["FormControl"](Object(_file_factory__WEBPACK_IMPORTED_MODULE_2__["blankFile"])("https://i.imgur.com/uUL3zYD.jpg"));
         this.enabledControl.valueChanges.subscribe(function (isEnabled) {
             if (isEnabled) {
                 _this.controlFile.enable();
@@ -2222,10 +2235,13 @@ var TestFormFileComponent = /** @class */ (function () {
             var _a;
             return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_b) {
                 switch (_b.label) {
-                    case 0:
-                        _a = this;
-                        return [4 /*yield*/, Object(_file_factory__WEBPACK_IMPORTED_MODULE_2__["makeConfig"])(1000)];
+                    case 0: return [4 /*yield*/, Object(_file_factory__WEBPACK_IMPORTED_MODULE_2__["delay"])(1000)];
                     case 1:
+                        _b.sent();
+                        this.controlFile.setValue(Object(_file_factory__WEBPACK_IMPORTED_MODULE_2__["blankFile"])("https://i.imgur.com/ioqsdHZ.jpeg"));
+                        _a = this;
+                        return [4 /*yield*/, Object(_file_factory__WEBPACK_IMPORTED_MODULE_2__["makeConfig"])(3000)];
+                    case 2:
                         _a.config = _b.sent();
                         return [2 /*return*/];
                 }
@@ -2234,7 +2250,7 @@ var TestFormFileComponent = /** @class */ (function () {
     };
     TestFormFileComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
-            template: "\n    <h2>File Uploader/Viewer Control</h2>\n    <div>\n      <h5>Control Enabled({{ enabledControl.value | json }})</h5>\n      <mat-slide-toggle [formControl]=\"enabledControl\"> </mat-slide-toggle>\n    </div>\n    <div class=\"container-2cols\">\n      <form-firebase-file [formControl]=\"controlFile\" [config]=\"config\" debug=\"true\">\n      </form-firebase-file>\n      <pre>{{ controlFile?.value | json }}</pre>\n    </div>\n  "
+            template: "\n    <h2>File Uploader/Viewer Control</h2>\n    <div>\n      <h5>Control Enabled({{ enabledControl.value | json }})</h5>\n      <mat-slide-toggle [formControl]=\"enabledControl\"> </mat-slide-toggle>\n    </div>\n    <div class=\"container-2cols\">\n      <form-firebase-file\n        *ngIf=\"controlFile\"\n        [config]=\"config\"\n        [formControl]=\"controlFile\"\n        debug=\"true\"\n      >\n      </form-firebase-file>\n      <pre>{{ controlFile?.value | json }}</pre>\n    </div>\n  "
         }),
         tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [])
     ], TestFormFileComponent);
@@ -2259,6 +2275,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "../../node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _file_factory__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./file-factory */ "./src/app/file-factory.ts");
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/forms */ "../../node_modules/@angular/forms/fesm5/forms.js");
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs/operators */ "../../node_modules/rxjs/_esm5/operators/index.js");
+
 
 
 
@@ -2285,10 +2303,12 @@ var TestFormFilesComponent = /** @class */ (function () {
             var _a;
             return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_b) {
                 switch (_b.label) {
-                    case 0:
+                    case 0: return [4 /*yield*/, Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["delay"])(1000)];
+                    case 1:
+                        _b.sent();
                         _a = this;
                         return [4 /*yield*/, Object(_file_factory__WEBPACK_IMPORTED_MODULE_2__["makeConfig"])(2000)];
-                    case 1:
+                    case 2:
                         _a.config = _b.sent();
                         return [2 /*return*/];
                 }
