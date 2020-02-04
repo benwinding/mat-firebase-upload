@@ -129,7 +129,7 @@ export class UploadsManager implements IUploadsManager {
   public async clickRemoveTag(fileObject: FormFileObject) {
     const currentFiles = this.getCurrentFiles();
     const filteredFiles = currentFiles.filter(f => f.id !== fileObject.id);
-    console.log('form-files: clickRemoveTag', { currentFiles, filteredFiles });
+    this.logger.log('form-files: clickRemoveTag', { currentFiles, filteredFiles });
     this.updatesFromInternal(filteredFiles, true);
     if (!this.config.deleteOnStorage) {
       return;
@@ -137,11 +137,11 @@ export class UploadsManager implements IUploadsManager {
     if (fileObject.bucket_path) {
       try {
         await this.storage.refFromURL(fileObject.bucket_path).delete();
-        console.log('form-files: clickRemoveTag() file deleted from storage', {
+        this.logger.log('form-files: clickRemoveTag() file deleted from storage', {
           fileObject
         });
       } catch (error) {
-        console.log(
+        this.logger.log(
           'form-files: clickRemoveTag() problem deleting file',
           error
         );
@@ -169,7 +169,7 @@ export class UploadsManager implements IUploadsManager {
     const dir = this.config.directory;
     const dirPath = `${TrimSlashes(bucketPath)}/${TrimSlashes(dir)}`;
     const fullPath = `${TrimSlashes(dirPath)}/${uniqueFileName}`;
-    console.log('beginUploadTask()', { fileData: file, bucketPath, fullPath });
+    this.logger.log('beginUploadTask()', { fileData: file, bucketPath, fullPath });
     let fileParsed;
     if (file.type.includes('image/')) {
       fileParsed = await this.parseAndCompress(file);
@@ -235,7 +235,7 @@ export class UploadsManager implements IUploadsManager {
     const oldKb = this.getFileSizeKiloBytes(dataURL);
     const newKb = this.getFileSizeKiloBytes(newDataURL);
     const fileNew = dataURItoBlob(newDataURL) as File;
-    console.log(`app-tags-files.component: optimized image...
+    this.logger.log(`app-tags-files.component: optimized image...
   --> old=${oldKb} kb
   --> new=${newKb} kb`);
     return fileNew;
@@ -260,14 +260,14 @@ export class UploadsManager implements IUploadsManager {
           f => f.bucket_path === fullPath
         );
         if (!file) {
-          console.warn('onNext: Cannot find matching file', {
+          this.logger.warn('onNext: Cannot find matching file', {
             fullPath,
             progress,
             snapshot
           });
           return;
         }
-        console.log('onNext: Upload is running', {
+        this.logger.log('onNext: Upload is running', {
           file,
           fullPath,
           progress,
@@ -280,11 +280,11 @@ export class UploadsManager implements IUploadsManager {
 
   private onError(error) {
     this.ns.notify(error.message, 'Error Uploading', true);
-    console.error('onError(error)', { error }, error);
+    this.logger.error('onError(error)', { error }, error);
   }
 
   private async onComplete(fullPath, uniqueFileName, originalFileName) {
-    console.log('onComplete()', {
+    this.logger.log('onComplete()', {
       fullPath,
       uniqueFileName,
       originalFileName
