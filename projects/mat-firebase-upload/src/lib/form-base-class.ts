@@ -75,7 +75,9 @@ export class FormBase<T>
   }
 
   set value(value) {
-    console.log('this.set value()', {value});
+    if (this.debug) {
+      console.log('this.set value()', {value});
+    }
     this._value = value;
     this.internalControl.setValue(value, { emitEvent: true });
   }
