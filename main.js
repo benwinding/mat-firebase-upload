@@ -112,7 +112,7 @@ var UploadsManager = /** @class */ (function () {
                     case 0:
                         currentFiles = this.getCurrentFiles();
                         filteredFiles = currentFiles.filter(function (f) { return f.id !== fileObject.id; });
-                        console.log('form-files: clickRemoveTag', { currentFiles: currentFiles, filteredFiles: filteredFiles });
+                        this.logger.log('form-files: clickRemoveTag', { currentFiles: currentFiles, filteredFiles: filteredFiles });
                         this.updatesFromInternal(filteredFiles, true);
                         if (!this.config.deleteOnStorage) {
                             return [2 /*return*/];
@@ -124,13 +124,13 @@ var UploadsManager = /** @class */ (function () {
                         return [4 /*yield*/, this.storage.refFromURL(fileObject.bucket_path).delete()];
                     case 2:
                         _a.sent();
-                        console.log('form-files: clickRemoveTag() file deleted from storage', {
+                        this.logger.log('form-files: clickRemoveTag() file deleted from storage', {
                             fileObject: fileObject
                         });
                         return [3 /*break*/, 4];
                     case 3:
                         error_1 = _a.sent();
-                        console.log('form-files: clickRemoveTag() problem deleting file', error_1);
+                        this.logger.log('form-files: clickRemoveTag() problem deleting file', error_1);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }
@@ -163,7 +163,7 @@ var UploadsManager = /** @class */ (function () {
                         dir = this.config.directory;
                         dirPath = Object(_utils__WEBPACK_IMPORTED_MODULE_5__["TrimSlashes"])(bucketPath) + "/" + Object(_utils__WEBPACK_IMPORTED_MODULE_5__["TrimSlashes"])(dir);
                         fullPath = Object(_utils__WEBPACK_IMPORTED_MODULE_5__["TrimSlashes"])(dirPath) + "/" + uniqueFileName;
-                        console.log('beginUploadTask()', { fileData: file, bucketPath: bucketPath, fullPath: fullPath });
+                        this.logger.log('beginUploadTask()', { fileData: file, bucketPath: bucketPath, fullPath: fullPath });
                         if (!file.type.includes('image/')) return [3 /*break*/, 2];
                         return [4 /*yield*/, this.parseAndCompress(file)];
                     case 1:
@@ -233,7 +233,7 @@ var UploadsManager = /** @class */ (function () {
                         oldKb = this.getFileSizeKiloBytes(dataURL);
                         newKb = this.getFileSizeKiloBytes(newDataURL);
                         fileNew = Object(_utils__WEBPACK_IMPORTED_MODULE_5__["dataURItoBlob"])(newDataURL);
-                        console.log("app-tags-files.component: optimized image...\n  --> old=" + oldKb + " kb\n  --> new=" + newKb + " kb");
+                        this.logger.log("app-tags-files.component: optimized image...\n  --> old=" + oldKb + " kb\n  --> new=" + newKb + " kb");
                         return [2 /*return*/, fileNew];
                 }
             });
@@ -254,14 +254,14 @@ var UploadsManager = /** @class */ (function () {
                         progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                         file = this.getCurrentFiles().find(function (f) { return f.bucket_path === fullPath; });
                         if (!file) {
-                            console.warn('onNext: Cannot find matching file', {
+                            this.logger.warn('onNext: Cannot find matching file', {
                                 fullPath: fullPath,
                                 progress: progress,
                                 snapshot: snapshot
                             });
                             return [2 /*return*/];
                         }
-                        console.log('onNext: Upload is running', {
+                        this.logger.log('onNext: Upload is running', {
                             file: file,
                             fullPath: fullPath,
                             progress: progress,
@@ -276,7 +276,7 @@ var UploadsManager = /** @class */ (function () {
     };
     UploadsManager.prototype.onError = function (error) {
         this.ns.notify(error.message, 'Error Uploading', true);
-        console.error('onError(error)', { error: error }, error);
+        this.logger.error('onError(error)', { error: error }, error);
     };
     UploadsManager.prototype.onComplete = function (fullPath, uniqueFileName, originalFileName) {
         return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](this, void 0, void 0, function () {
@@ -284,7 +284,7 @@ var UploadsManager = /** @class */ (function () {
             return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        console.log('onComplete()', {
+                        this.logger.log('onComplete()', {
                             fullPath: fullPath,
                             uniqueFileName: uniqueFileName,
                             originalFileName: originalFileName
@@ -385,10 +385,9 @@ var FormBase = /** @class */ (function () {
             .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_4__["auditTime"])(100))
             .subscribe(function (value) {
             _this._value = value;
-            console.log('internalControl.valueChanges()', { value: value });
+            _this.logger.log('internalControl.valueChanges()', { value: value });
             _this.onChange(_this._value);
             _this.onTouched();
-            // console.log('form-base-class: valueChanges', {val: this._value});
         });
         if (!this.placeholder) {
             var nameParsed = Object(_utils_case_helper__WEBPACK_IMPORTED_MODULE_5__["ConvertToTitleCase"])(this.formControlName + '');
@@ -403,7 +402,7 @@ var FormBase = /** @class */ (function () {
             return this._value;
         },
         set: function (value) {
-            console.log('this.set value()', { value: value });
+            this.logger.log('this.set value()', { value: value });
             this._value = value;
             this.internalControl.setValue(value, { emitEvent: true });
         },
@@ -434,7 +433,7 @@ var FormBase = /** @class */ (function () {
     FormBase.prototype.validate = function (c) {
         var errors = c.errors;
         var value = c.value;
-        // console.log('form-base-class: validate()', { errors, value });
+        this.logger.log('form-base-class: validate()', { errors: errors, value: value });
         this.internalControl.setValidators(c.validator);
         return !this.validationError
             ? null
@@ -1925,6 +1924,22 @@ var SimpleLogger = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(SimpleLogger.prototype, "error", {
+        get: function () {
+            if (!this.debug) {
+                return function () {
+                    var any = [];
+                    for (var _i = 0; _i < arguments.length; _i++) {
+                        any[_i] = arguments[_i];
+                    }
+                };
+            }
+            var bounderrorFn = console.error.bind(console, this.logPrefix);
+            return bounderrorFn;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(SimpleLogger.prototype, "warn", {
         get: function () {
             if (!this.debug) {
@@ -2058,7 +2073,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/forms */ "../../node_modules/@angular/forms/fesm5/forms.js");
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/router */ "../../node_modules/@angular/router/fesm5/router.js");
 /* harmony import */ var _angular_material__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/material */ "../../node_modules/@angular/material/esm5/material.es5.js");
-/* harmony import */ var projects_mat_firebase_upload_src_public_api__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! projects/mat-firebase-upload/src/public-api */ "../mat-firebase-upload/src/public-api.ts");
+/* harmony import */ var _mat_firebase_upload_src_public_api__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../mat-firebase-upload/src/public-api */ "../mat-firebase-upload/src/public-api.ts");
 /* harmony import */ var _test_form_files_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./test-form-files.component */ "./src/app/test-form-files.component.ts");
 /* harmony import */ var _test_form_file_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./test-form-file.component */ "./src/app/test-form-file.component.ts");
 /* harmony import */ var _test_form_image_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./test-form-image.component */ "./src/app/test-form-image.component.ts");
@@ -2102,7 +2117,7 @@ var AppModule = /** @class */ (function () {
                 _angular_common__WEBPACK_IMPORTED_MODULE_5__["CommonModule"],
                 _angular_forms__WEBPACK_IMPORTED_MODULE_6__["ReactiveFormsModule"],
                 _angular_forms__WEBPACK_IMPORTED_MODULE_6__["FormsModule"],
-                projects_mat_firebase_upload_src_public_api__WEBPACK_IMPORTED_MODULE_9__["MatFirebaseUploadModule"],
+                _mat_firebase_upload_src_public_api__WEBPACK_IMPORTED_MODULE_9__["MatFirebaseUploadModule"],
                 _angular_router__WEBPACK_IMPORTED_MODULE_7__["RouterModule"].forRoot(allRoutes),
                 _angular_material__WEBPACK_IMPORTED_MODULE_8__["MatTabsModule"],
                 _angular_material__WEBPACK_IMPORTED_MODULE_8__["MatButtonModule"],
@@ -2532,7 +2547,7 @@ Object(_angular_platform_browser_dynamic__WEBPACK_IMPORTED_MODULE_1__["platformB
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /home/ben/work/mat-firebase-upload/projects/mat-firebase-upload-demo/src/main.ts */"./src/main.ts");
+module.exports = __webpack_require__(/*! /home/runner/work/mat-firebase-upload/mat-firebase-upload/projects/mat-firebase-upload-demo/src/main.ts */"./src/main.ts");
 
 
 /***/ })
