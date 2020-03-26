@@ -12,7 +12,7 @@ import {
   MatButtonModule,
   MatSlideToggleModule
 } from '@angular/material';
-import { MatFirebaseUploadModule } from 'projects/mat-firebase-upload/src/public-api';
+import { MatFirebaseUploadModule } from '../../../mat-firebase-upload/src/public-api';
 import { TestFormFilesComponent } from './test-form-files.component';
 import { TestFormFileComponent } from './test-form-file.component';
 import { TestFormImageComponent } from './test-form-image.component';

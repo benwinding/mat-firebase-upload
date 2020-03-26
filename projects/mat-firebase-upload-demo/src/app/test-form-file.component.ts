@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { blankFile, makeConfig, delay } from "./file-factory";
 import { FormControl } from "@angular/forms";
-import { FormFirebaseFilesConfiguration } from "mat-firebase-upload/public-api";
+import { FormFirebaseFilesConfiguration } from '../../../mat-firebase-upload/src/public-api';
 
 @Component({
   template: `

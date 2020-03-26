@@ -1,6 +1,6 @@
 
 import { environment } from '../environments/environment';
-import { FormFileObject, FormFirebaseConfigurationBase } from 'projects/mat-firebase-upload/src/public-api';
+import { FormFileObject, FormFirebaseConfigurationBase } from '../../../mat-firebase-upload/src/public-api';
 
 export function blankFile(url: string): FormFileObject {
   return {
