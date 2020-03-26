@@ -15,6 +15,17 @@ export class SimpleLogger {
     return boundLogFn;
   }
 
+  public get error() {
+    if (!this.debug) {
+      return (...any) => {};
+    }
+    const bounderrorFn: (...any) => void = console.error.bind(
+      console,
+      this.logPrefix
+    );
+    return bounderrorFn;
+  }
+
   public get warn() {
     if (!this.debug) {
       return (...any) => {};

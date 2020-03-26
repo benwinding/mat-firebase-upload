@@ -227,6 +227,7 @@ export class FormFirebaseImageComponent extends FormBase<FormFileObject>
       this.ns,
       this.uploadStatusChanged,
       $internalChangesTap,
+      [this.value],
       this.logger
     );
     this.um.$currentFiles.pipe(takeUntil(this.destroyed)).subscribe(vals => {

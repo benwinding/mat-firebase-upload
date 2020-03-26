@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-yarn build-lib
-cp -r ./projects/mat-firebase-upload/src/assets dist/mat-firebase-upload
-pushd dist/mat-firebase-upload
-npm publish
-popd

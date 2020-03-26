@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { blankFile, makeConfig } from './file-factory';
-import { FormControl } from '@angular/forms';
-import { FormFirebaseFilesConfiguration } from 'mat-firebase-upload/public-api';
+import { Component, OnInit } from "@angular/core";
+import { blankFile, makeConfig, delay } from "./file-factory";
+import { FormControl } from "@angular/forms";
+import { FormFirebaseFilesConfiguration } from "mat-firebase-upload/public-api";
 
 @Component({
   template: `
@@ -11,7 +11,12 @@ import { FormFirebaseFilesConfiguration } from 'mat-firebase-upload/public-api';
       <mat-slide-toggle [formControl]="enabledControl"> </mat-slide-toggle>
     </div>
     <div class="container-2cols">
-      <form-firebase-file [formControl]="controlFile" [config]="config" debug="true">
+      <form-firebase-file
+        *ngIf="controlFile"
+        [config]="config"
+        [formControl]="controlFile"
+        debug="true"
+      >
       </form-firebase-file>
       <pre>{{ controlFile?.value | json }}</pre>
     </div>
@@ -19,9 +24,7 @@ import { FormFirebaseFilesConfiguration } from 'mat-firebase-upload/public-api';
 })
 export class TestFormFileComponent implements OnInit {
   enabledControl = new FormControl(true);
-  controlFile = new FormControl(
-    blankFile('https://i.imgur.com/uUL3zYD.jpg')
-  );
+  controlFile = new FormControl(blankFile("https://i.imgur.com/uUL3zYD.jpg"));
   config: FormFirebaseFilesConfiguration;
 
   constructor() {
@@ -35,6 +38,8 @@ export class TestFormFileComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.config = await makeConfig(1000);
+    await delay(1000);
+    this.controlFile.setValue(blankFile("https://i.imgur.com/ioqsdHZ.jpeg"))
+    this.config = await makeConfig(3000);
   }
 }

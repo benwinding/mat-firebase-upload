@@ -1,8 +1,6 @@
-import {
-  FormFirebaseConfigurationBase,
-  FormFileObject
-} from 'mat-firebase-upload/public-api';
+
 import { environment } from '../environments/environment';
+import { FormFileObject, FormFirebaseConfigurationBase } from 'projects/mat-firebase-upload/src/public-api';
 
 export function blankFile(url: string): FormFileObject {
   return {
@@ -29,13 +27,19 @@ export function blankFile2(): FormFileObject {
 
 export async function makeConfig(ms?: number) {
   if (ms) {
-    await new Promise(resolve => setTimeout(() => resolve(), ms));
+    await delay(ms);
   }
   const config: FormFirebaseConfigurationBase = {
     directory: `audits/somelocation`,
     firebaseConfig: environment.firebaseConfig,
     useUuidName: true,
-    acceptedFiles: 'application/pdf,image/*'
+    acceptedFiles: 'application/pdf,image/*',
+    imageCompressionMaxSize: 1600,
+    imageCompressionQuality: 0.9
   };
   return config;
+}
+
+export async function delay(ms: number) {
+  await new Promise(resolve => setTimeout(resolve, ms));
 }

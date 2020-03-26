@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { blankFile, makeConfig } from './file-factory';
 import { FormControl } from '@angular/forms';
 import { FormFirebaseFilesConfiguration } from 'projects/mat-firebase-upload/src/public-api';
+import { delay } from 'rxjs/operators';
 
 @Component({
   template: `
@@ -40,6 +41,7 @@ export class TestFormFilesComponent implements OnInit {
   }
 
   async ngOnInit() {
+    await delay(1000);
     this.config = await makeConfig(2000);
   }
 }

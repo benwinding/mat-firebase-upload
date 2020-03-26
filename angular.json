@@ -76,6 +76,7 @@
                   "with": "projects/mat-firebase-upload-demo/src/environments/environment.prod.ts"
                 }
               ],
+              "baseHref" : "/mat-firebase-upload/",
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,

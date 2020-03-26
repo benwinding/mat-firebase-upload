@@ -54,10 +54,9 @@ export class FormBase<T>
       .pipe(auditTime(100))
       .subscribe((value) => {
         this._value = value;
-        console.log('internalControl.valueChanges()', {value});
+        this.logger.log('internalControl.valueChanges()', {value});
         this.onChange(this._value);
         this.onTouched();
-        // console.log('form-base-class: valueChanges', {val: this._value});
       });
 
     if (!this.placeholder) {
@@ -75,7 +74,7 @@ export class FormBase<T>
   }
 
   set value(value) {
-    console.log('this.set value()', {value});
+    this.logger.log('this.set value()', {value});
     this._value = value;
     this.internalControl.setValue(value, { emitEvent: true });
   }
@@ -108,7 +107,7 @@ export class FormBase<T>
   public validate(c: FormControl) {
     const errors = c.errors;
     const value = c.value;
-    // console.log('form-base-class: validate()', { errors, value });
+    this.logger.log('form-base-class: validate()', { errors, value });
     this.internalControl.setValidators(c.validator);
     return !this.validationError
       ? null
