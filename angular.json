@@ -48,6 +48,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "baseHref": "mat-firebase-upload",
             "outputPath": "dist/mat-firebase-upload-demo",
             "index": "projects/mat-firebase-upload-demo/src/index.html",
             "main": "projects/mat-firebase-upload-demo/src/main.ts",
