@@ -6,9 +6,8 @@
     "start": "ng serve --port 4567",
     "start-local": "ng serve --port 4567 --host 0.0.0.0",
     "build-lib": "ng build --project=mat-firebase-upload && cp README.md dist/mat-firebase-upload",
-    "build-demo": "ng build --project=mat-firebase-upload-demo",
+    "build-demo": "ng build --project=mat-firebase-upload-demo && dist/mat-firebase-upload-demo/index.html dist/mat-firebase-upload-demo/404.html",
     "watch-lib": "ng build --project=mat-firebase-upload --watch",
-    "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

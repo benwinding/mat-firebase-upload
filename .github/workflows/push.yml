@@ -48,7 +48,7 @@ jobs:
         if: steps.cache-modules.outputs.cache-hit != 'true'
         run: npm install
       - name: Build & Deploy Demo
-        run: npm run-script build
+        run: npm run-script build-demo
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@releases/v3
         with:
