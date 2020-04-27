@@ -27,7 +27,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
       </div>
       <img
         #img
-        class="fill"
+        class="fill smart-rotate"
         [src]="imageSrc"
         [hidden]="!img.hasLoaded && !img.hasError"
         (load)="img.hasLoaded = true"
@@ -37,6 +37,9 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
   `,
   styles: [
     `
+      .smart-rotate {
+        image-orientation: from-image;
+      }
       .z1 {
         z-index: 1;
       }
@@ -76,7 +79,7 @@ export class PreviewImagePopupComponent {
     public dialogRef: MatDialogRef<PreviewImagePopupComponent>,
     @Inject(MAT_DIALOG_DATA) public imageSrc: string
   ) {}
-  
+
   onCancel() {
     this.dialogRef.close();
   }

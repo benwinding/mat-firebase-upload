@@ -13,7 +13,7 @@ import { PreviewImagePopupComponent } from './preview-images/components/preview-
           <div class="flex-h has-ellipsis">
             <mat-icon *ngIf="!disabled && isDone(file)">done</mat-icon>
             <a class="flex-h has-ellipsis" [href]="file.id" target="_blank">
-              <img class="file-icon" image [src]="file['fileicon']" />
+              <img class="file-icon smart-rotate" image [src]="file['fileicon']" />
               <span class="has-ellipsis">{{ file.value.name }}</span>
               <mat-icon class="i-open">open_in_new</mat-icon>
             </a>
@@ -31,7 +31,7 @@ import { PreviewImagePopupComponent } from './preview-images/components/preview-
               </div>
               <img
                 #img
-                class="file-thumb has-pointer"
+                class="file-thumb has-pointer smart-rotate"
                 matTooltip="Click to preview image"
                 (click)="clickedImage(imageurl)"
                 [src]="imageurl"
@@ -60,6 +60,9 @@ import { PreviewImagePopupComponent } from './preview-images/components/preview-
   `,
   styles: [
     `
+      .smart-rotate {
+        image-orientation: from-image;
+      }
       .full-width {
         width: 100%;
       }

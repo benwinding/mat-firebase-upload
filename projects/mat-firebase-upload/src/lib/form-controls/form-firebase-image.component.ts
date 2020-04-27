@@ -66,7 +66,7 @@ import { SimpleLogger } from '../utils/simple-logger';
             </button>
             <img
               #img
-              class="file-thumb has-pointer"
+              class="file-thumb has-pointer smart-rotate"
               matTooltip="Click to preview image"
               (click)="onImageClicked($event, imageurl)"
               [src]="imageurl"
@@ -90,6 +90,9 @@ import { SimpleLogger } from '../utils/simple-logger';
   `,
   styles: [
     `
+      .smart-rotate {
+        image-orientation: from-image;
+      }
       .relative {
         position: relative;
       }

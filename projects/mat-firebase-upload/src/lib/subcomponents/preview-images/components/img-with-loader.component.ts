@@ -19,7 +19,7 @@ import { PreviewImagePopupComponent } from './preview-image-popup.component';
       <img
         image
         #img
-        class="image-fit has-pointer"
+        class="image-fit has-pointer smart-rotate"
         [hidden]="!hasLoaded && !hasError"
         (click)="clickedImage(src)"
         [src]="src"
@@ -30,6 +30,9 @@ import { PreviewImagePopupComponent } from './preview-image-popup.component';
   `,
   styles: [
     `
+      .smart-rotate {
+        image-orientation: from-image;
+      }
       .bg-grey {
         background-color: #dddddd78;
       }
