@@ -512,8 +512,8 @@ var FormFirebaseFileComponent = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.ns = ns;
         _this.dialog = dialog;
-        _this.placeholder = 'Uploaded File';
-        _this.uploadMessage = 'Upload a File Here';
+        _this.placeholder = "Uploaded File";
+        _this.uploadMessage = "Upload a File Here";
         // tslint:disable-next-line: no-output-on-prefix
         _this.uploadStatusChanged = new _angular_core__WEBPACK_IMPORTED_MODULE_1__["EventEmitter"]();
         _this.destroyed = new rxjs__WEBPACK_IMPORTED_MODULE_3__["Subject"]();
@@ -546,7 +546,7 @@ var FormFirebaseFileComponent = /** @class */ (function (_super) {
     };
     FormFirebaseFileComponent.prototype.initUploadManager = function () {
         var _this = this;
-        this.logger = new _utils_simple_logger__WEBPACK_IMPORTED_MODULE_10__["SimpleLogger"](this.debug, '[form-firebase-file]');
+        this.logger = new _utils_simple_logger__WEBPACK_IMPORTED_MODULE_10__["SimpleLogger"](this.debug, "[form-firebase-file]");
         this.destroyUploadManager();
         var $internalChangesTap = this.internalControl.valueChanges.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_8__["takeUntil"])(this.destroyed), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_8__["map"])(function (file) { return [file]; }));
         this.um = new _firebase_uploads_manager__WEBPACK_IMPORTED_MODULE_7__["UploadsManager"](this.config, this.ns, this.uploadStatusChanged, $internalChangesTap, [this.value], this.logger);
@@ -557,7 +557,7 @@ var FormFirebaseFileComponent = /** @class */ (function (_super) {
         });
     };
     FormFirebaseFileComponent.prototype.writeValue = function (value) {
-        if (typeof value === 'object') {
+        if (typeof value === "object") {
             this.value = value;
         }
         else {
@@ -570,7 +570,7 @@ var FormFirebaseFileComponent = /** @class */ (function (_super) {
         this.dialog.open(_subcomponents_preview_images_components_preview_image_popup_component__WEBPACK_IMPORTED_MODULE_9__["PreviewImagePopupComponent"], {
             data: imageurl,
             hasBackdrop: true,
-            disableClose: false
+            disableClose: false,
         });
     };
     FormFirebaseFileComponent.prototype.clickRemoveTag = function (fileObject) {
@@ -621,21 +621,21 @@ var FormFirebaseFileComponent = /** @class */ (function (_super) {
     FormFirebaseFileComponent = FormFirebaseFileComponent_1 = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
             // tslint:disable-next-line: component-selector
-            selector: 'form-firebase-file',
-            template: "\n    <div class=\"container\">\n      <span class=\"placeholder\">{{ placeholder }}</span>\n      <label\n        class=\"custom-file-upload\"\n        [class.dragover]=\"!disabled && isDraggingOnTop\"\n        (dragover)=\"isDraggingOnTop = true; $event.preventDefault()\"\n        (dragleave)=\"isDraggingOnTop = false\"\n        (drop)=\"isDraggingOnTop = false; onFileDrop($event)\"\n      >\n        <input\n          [hidden]=\"true\"\n          [placeholder]=\"placeholder\"\n          type=\"file\"\n          [disabled]=\"disabled\"\n          (change)=\"onFileInputChange($event)\"\n          [accept]=\"config?.acceptedFiles || 'image/*'\"\n        />\n        <p class=\"upload-message\">{{ uploadMessage }}</p>\n      </label>\n      <div class=\"relative\" *ngIf=\"value?.id\">\n        <lib-uploaded-files-list\n          placeholder=\"Uploaded:\"\n          [disabled]=\"disabled\"\n          [uploadedFiles]=\"[value]\"\n          (clickRemoveTag)=\"this.clickRemoveTag($event)\"\n        >\n        </lib-uploaded-files-list>\n      </div>\n    </div>\n  ",
+            selector: "form-firebase-file",
+            template: "\n    <div class=\"container\">\n      <span class=\"placeholder\">{{ placeholder }}</span>\n      <label\n        class=\"custom-file-upload\"\n        [class.disabled]=\"disabled\"\n        [class.dragover]=\"!disabled && isDraggingOnTop\"\n        (dragover)=\"isDraggingOnTop = true; $event.preventDefault()\"\n        (dragleave)=\"isDraggingOnTop = false\"\n        (drop)=\"isDraggingOnTop = false; onFileDrop($event)\"\n      >\n        <input\n          [hidden]=\"true\"\n          [placeholder]=\"placeholder\"\n          type=\"file\"\n          [disabled]=\"disabled\"\n          (change)=\"onFileInputChange($event)\"\n          [accept]=\"config?.acceptedFiles || 'image/*'\"\n        />\n        <p class=\"upload-message\">\n          {{ uploadMessage }}\n        </p>\n        <i class=\"upload-message\" *ngIf=\"disabled\">\n          (disabled)\n        </i>\n      </label>\n      <div class=\"relative\" *ngIf=\"value?.id\">\n        <lib-uploaded-files-list\n          placeholder=\"Uploaded:\"\n          [disabled]=\"disabled\"\n          [uploadedFiles]=\"[value]\"\n          (clickRemoveTag)=\"this.clickRemoveTag($event)\"\n        >\n        </lib-uploaded-files-list>\n      </div>\n    </div>\n  ",
             providers: [
                 {
                     provide: _angular_forms__WEBPACK_IMPORTED_MODULE_2__["NG_VALUE_ACCESSOR"],
                     useExisting: Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["forwardRef"])(function () { return FormFirebaseFileComponent_1; }),
-                    multi: true
+                    multi: true,
                 },
                 {
                     provide: _angular_forms__WEBPACK_IMPORTED_MODULE_2__["NG_VALIDATORS"],
                     useExisting: Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["forwardRef"])(function () { return FormFirebaseFileComponent_1; }),
-                    multi: true
-                }
+                    multi: true,
+                },
             ],
-            styles: ["\n      .margin10 {\n        margin: 10px;\n      }\n      .relative {\n        position: relative;\n      }\n      .container {\n        display: flex;\n        flex-direction: column;\n        position: relative;\n      }\n      .placeholder {\n        color: grey;\n        margin-bottom: 5px;\n      }\n      .upload-message {\n        font-size: 1.5em;\n        margin-top: 0;\n        margin-bottom: 10px;\n        text-align: center;\n        color: #777;\n        cursor: pointer;\n      }\n      .remove-btn {\n        position: absolute;\n        right: 5px;\n        top: 5px;\n      }\n      .custom-file-upload {\n        display: inline-block;\n        border: 4px dashed #ccc;\n        background: transparent;\n        padding: 50px 0px;\n        cursor: pointer;\n        width: calc(100% - 8px - 20px);\n      }\n      .dragover {\n        background: #ddd;\n      }\n      .justify-around {\n        justify-content: space-around;\n      }\n      .flex-h {\n        display: flex;\n        flex-direction: row;\n        align-items: center;\n      }\n      .has-pointer {\n        cursor: pointer;\n      }\n      .file-thumb {\n        width: auto;\n        max-height: 250px;\n        max-width: 100%;\n      }\n    "]
+            styles: ["\n      .margin10 {\n        margin: 10px;\n      }\n      .relative {\n        position: relative;\n      }\n      .container {\n        display: flex;\n        flex-direction: column;\n        position: relative;\n      }\n      .placeholder {\n        color: grey;\n        margin-bottom: 5px;\n      }\n      .upload-message {\n        font-size: 1.5em;\n        margin-top: 0;\n        margin-bottom: 10px;\n        text-align: center;\n        color: #777;\n        cursor: pointer;\n        display: block;\n      }\n      .remove-btn {\n        position: absolute;\n        right: 5px;\n        top: 5px;\n      }\n      .custom-file-upload {\n        display: inline-block;\n        border: 4px dashed #eee;\n        background: transparent;\n        padding: 50px 0px;\n        cursor: pointer;\n        width: calc(100% - 8px - 20px);\n      }\n      .custom-file-upload.disabled {\n        background: #eee;\n      }\n      .dragover {\n        background: #ddd;\n      }\n      .justify-around {\n        justify-content: space-around;\n      }\n      .flex-h {\n        display: flex;\n        flex-direction: row;\n        align-items: center;\n      }\n      .has-pointer {\n        cursor: pointer;\n      }\n      .file-thumb {\n        width: auto;\n        max-height: 250px;\n        max-width: 100%;\n      }\n    "]
         }),
         tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_utils_notification_service__WEBPACK_IMPORTED_MODULE_5__["NotificationService"], _angular_material__WEBPACK_IMPORTED_MODULE_6__["MatDialog"]])
     ], FormFirebaseFileComponent);
@@ -793,7 +793,7 @@ var FormFirebaseFilesComponent = /** @class */ (function (_super) {
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
             // tslint:disable-next-line: component-selector
             selector: "form-firebase-files",
-            template: "\n    <div>\n      <label\n        class=\"custom-file-upload\"\n        [class.dragover]=\"!maxReached && !disabled && isDraggingOnTop\"\n        (dragover)=\"isDraggingOnTop = true; $event.preventDefault()\"\n        (dragleave)=\"isDraggingOnTop = false\"\n        (drop)=\"isDraggingOnTop = false; onFileDrop($event)\"\n      >\n        <input\n          *ngIf=\"isMultiple\"\n          [hidden]=\"true\"\n          type=\"file\"\n          multiple\n          [disabled]=\"disabled || maxReached\"\n          (change)=\"onFileInputChange($event)\"\n          [accept]=\"config.acceptedFiles || '*'\"\n        />\n        <input\n          *ngIf=\"!isMultiple\"\n          [hidden]=\"true\"\n          type=\"file\"\n          [disabled]=\"disabled || maxReached\"\n          (change)=\"onFileInputChange($event)\"\n          [accept]=\"config.acceptedFiles || '*'\"\n        />\n        <div class=\"flex-v\">\n          <span *ngIf=\"isConfigLoaded\">\n            {{ placeholder }}\n          </span>\n          <i *ngIf=\"disabled\">\n            (disabled)\n          </i>\n        </div>\n        <span *ngIf=\"!isConfigLoaded\">\n          [config] is waiting for variable config:\n          FormFirebaseFilesConfiguration to resolve\n        </span>\n        <div class=\"max-files\" *ngIf=\"maxReached && !disabled\">\n          Max Uploaded - Limit of {{ config.maxFiles }} file(s) reached. Remove\n          files to change uploads\n        </div>\n      </label>\n      <lib-uploaded-files-list\n        [disabled]=\"disabled\"\n        [uploadedFiles]=\"this.value\"\n        (clickRemoveTag)=\"this.clickRemoveTag($event)\"\n      >\n      </lib-uploaded-files-list>\n    </div>\n  ",
+            template: "\n    <div>\n      <label\n        class=\"custom-file-upload\"\n        [class.dragover]=\"!maxReached && !disabled && isDraggingOnTop\"\n        [class.disabled]=\"disabled\"\n        (dragover)=\"isDraggingOnTop = true; $event.preventDefault()\"\n        (dragleave)=\"isDraggingOnTop = false\"\n        (drop)=\"isDraggingOnTop = false; onFileDrop($event)\"\n      >\n        <input\n          *ngIf=\"isMultiple\"\n          [hidden]=\"true\"\n          type=\"file\"\n          multiple\n          [disabled]=\"disabled || maxReached\"\n          (change)=\"onFileInputChange($event)\"\n          [accept]=\"config.acceptedFiles || '*'\"\n        />\n        <input\n          *ngIf=\"!isMultiple\"\n          [hidden]=\"true\"\n          type=\"file\"\n          [disabled]=\"disabled || maxReached\"\n          (change)=\"onFileInputChange($event)\"\n          [accept]=\"config.acceptedFiles || '*'\"\n        />\n        <div class=\"flex-v\">\n          <span *ngIf=\"isConfigLoaded\">\n            {{ placeholder }}\n          </span>\n          <i *ngIf=\"disabled\">\n            (disabled)\n          </i>\n        </div>\n        <span *ngIf=\"!isConfigLoaded\">\n          [config] is waiting for variable config:\n          FormFirebaseFilesConfiguration to resolve\n        </span>\n        <div class=\"max-files\" *ngIf=\"maxReached && !disabled\">\n          Max Uploaded - Limit of {{ config.maxFiles }} file(s) reached. Remove\n          files to change uploads\n        </div>\n      </label>\n      <lib-uploaded-files-list\n        [disabled]=\"disabled\"\n        [uploadedFiles]=\"this.value\"\n        (clickRemoveTag)=\"this.clickRemoveTag($event)\"\n      >\n      </lib-uploaded-files-list>\n    </div>\n  ",
             providers: [
                 {
                     provide: _angular_forms__WEBPACK_IMPORTED_MODULE_2__["NG_VALUE_ACCESSOR"],
@@ -806,7 +806,7 @@ var FormFirebaseFilesComponent = /** @class */ (function (_super) {
                     multi: true
                 }
             ],
-            styles: ["\n      .custom-file-upload {\n        border: 4px dashed #ccc;\n        display: inline-block;\n        padding: 35px 0px;\n        cursor: pointer;\n        width: calc(100% - 8px);\n        text-align: center;\n        font-size: 1.5em;\n        color: #777;\n      }\n      .dragover {\n        background: #ddd;\n      }\n      .max-files {\n        font-size: 0.9em;\n        color: orange;\n        font-style: italic;\n      }\n      .flex-v {\n        display: flex;\n        align-items: center;\n        flex-direction: column;\n      }\n    "]
+            styles: ["\n      .custom-file-upload {\n        border: 4px dashed #eee;\n        display: inline-block;\n        padding: 35px 0px;\n        cursor: pointer;\n        width: calc(100% - 8px);\n        text-align: center;\n        font-size: 1.5em;\n        color: #777;\n      }\n      .custom-file-upload.disabled {\n        background: #eee;\n      }\n      .dragover {\n        background: #ddd;\n      }\n      .max-files {\n        font-size: 0.9em;\n        color: orange;\n        font-style: italic;\n      }\n      .flex-v {\n        display: flex;\n        align-items: center;\n        flex-direction: column;\n      }\n    "]
         }),
         tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_utils_notification_service__WEBPACK_IMPORTED_MODULE_7__["NotificationService"]])
     ], FormFirebaseFilesComponent);
