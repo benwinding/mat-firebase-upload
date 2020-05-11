@@ -27,6 +27,7 @@ import { SimpleLogger } from "../utils/simple-logger";
       <label
         class="custom-file-upload"
         [class.dragover]="!maxReached && !disabled && isDraggingOnTop"
+        [class.disabled]="disabled"
         (dragover)="isDraggingOnTop = true; $event.preventDefault()"
         (dragleave)="isDraggingOnTop = false"
         (drop)="isDraggingOnTop = false; onFileDrop($event)"
@@ -76,7 +77,7 @@ import { SimpleLogger } from "../utils/simple-logger";
   styles: [
     `
       .custom-file-upload {
-        border: 4px dashed #ccc;
+        border: 4px dashed #eee;
         display: inline-block;
         padding: 35px 0px;
         cursor: pointer;
@@ -84,6 +85,9 @@ import { SimpleLogger } from "../utils/simple-logger";
         text-align: center;
         font-size: 1.5em;
         color: #777;
+      }
+      .custom-file-upload.disabled {
+        background: #eee;
       }
       .dragover {
         background: #ddd;

@@ -5,28 +5,29 @@ import {
   OnDestroy,
   Input,
   Output,
-  EventEmitter
-} from '@angular/core';
-import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from '@angular/forms';
-import { FormFileObject } from '../FormFileObject';
-import { Subject } from 'rxjs';
-import { FormBase } from '../form-base-class';
-import { NotificationService } from '../utils/notification.service';
-import { MatDialog } from '@angular/material';
-import { UploadsManager } from '../firebase/uploads-manager';
-import { takeUntil, map } from 'rxjs/operators';
-import { FormFirebaseFileConfiguration } from '../FormFirebaseFileConfiguration';
-import { PreviewImagePopupComponent } from '../subcomponents/preview-images/components/preview-image-popup.component';
-import { SimpleLogger } from '../utils/simple-logger';
+  EventEmitter,
+} from "@angular/core";
+import { NG_VALUE_ACCESSOR, NG_VALIDATORS } from "@angular/forms";
+import { FormFileObject } from "../FormFileObject";
+import { Subject } from "rxjs";
+import { FormBase } from "../form-base-class";
+import { NotificationService } from "../utils/notification.service";
+import { MatDialog } from "@angular/material";
+import { UploadsManager } from "../firebase/uploads-manager";
+import { takeUntil, map } from "rxjs/operators";
+import { FormFirebaseFileConfiguration } from "../FormFirebaseFileConfiguration";
+import { PreviewImagePopupComponent } from "../subcomponents/preview-images/components/preview-image-popup.component";
+import { SimpleLogger } from "../utils/simple-logger";
 
 @Component({
   // tslint:disable-next-line: component-selector
-  selector: 'form-firebase-file',
+  selector: "form-firebase-file",
   template: `
     <div class="container">
       <span class="placeholder">{{ placeholder }}</span>
       <label
         class="custom-file-upload"
+        [class.disabled]="disabled"
         [class.dragover]="!disabled && isDraggingOnTop"
         (dragover)="isDraggingOnTop = true; $event.preventDefault()"
         (dragleave)="isDraggingOnTop = false"
@@ -40,7 +41,12 @@ import { SimpleLogger } from '../utils/simple-logger';
           (change)="onFileInputChange($event)"
           [accept]="config?.acceptedFiles || 'image/*'"
         />
-        <p class="upload-message">{{ uploadMessage }}</p>
+        <p class="upload-message">
+          {{ uploadMessage }}
+        </p>
+        <i class="upload-message" *ngIf="disabled">
+          (disabled)
+        </i>
       </label>
       <div class="relative" *ngIf="value?.id">
         <lib-uploaded-files-list
@@ -77,6 +83,7 @@ import { SimpleLogger } from '../utils/simple-logger';
         text-align: center;
         color: #777;
         cursor: pointer;
+        display: block;
       }
       .remove-btn {
         position: absolute;
@@ -85,11 +92,14 @@ import { SimpleLogger } from '../utils/simple-logger';
       }
       .custom-file-upload {
         display: inline-block;
-        border: 4px dashed #ccc;
+        border: 4px dashed #eee;
         background: transparent;
         padding: 50px 0px;
         cursor: pointer;
         width: calc(100% - 8px - 20px);
+      }
+      .custom-file-upload.disabled {
+        background: #eee;
       }
       .dragover {
         background: #ddd;
@@ -110,27 +120,27 @@ import { SimpleLogger } from '../utils/simple-logger';
         max-height: 250px;
         max-width: 100%;
       }
-    `
+    `,
   ],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => FormFirebaseFileComponent),
-      multi: true
+      multi: true,
     },
     {
       provide: NG_VALIDATORS,
       useExisting: forwardRef(() => FormFirebaseFileComponent),
-      multi: true
-    }
-  ]
+      multi: true,
+    },
+  ],
 })
 export class FormFirebaseFileComponent extends FormBase<FormFileObject>
   implements OnInit, OnDestroy {
   @Input()
-  placeholder = 'Uploaded File';
+  placeholder = "Uploaded File";
   @Input()
-  uploadMessage = 'Upload a File Here';
+  uploadMessage = "Upload a File Here";
 
   private _config: FormFirebaseFileConfiguration;
   @Input()
@@ -171,11 +181,11 @@ export class FormFirebaseFileComponent extends FormBase<FormFileObject>
   }
 
   initUploadManager() {
-    this.logger = new SimpleLogger(this.debug, '[form-firebase-file]');
+    this.logger = new SimpleLogger(this.debug, "[form-firebase-file]");
     this.destroyUploadManager();
     const $internalChangesTap = this.internalControl.valueChanges.pipe(
       takeUntil(this.destroyed),
-      map(file => [file])
+      map((file) => [file])
     );
     this.um = new UploadsManager(
       this.config,
@@ -185,7 +195,7 @@ export class FormFirebaseFileComponent extends FormBase<FormFileObject>
       [this.value],
       this.logger
     );
-    this.um.$currentFiles.pipe(takeUntil(this.destroyed)).subscribe(vals => {
+    this.um.$currentFiles.pipe(takeUntil(this.destroyed)).subscribe((vals) => {
       if (Array.isArray(vals)) {
         this.value = [...vals].pop();
       }
@@ -193,7 +203,7 @@ export class FormFirebaseFileComponent extends FormBase<FormFileObject>
   }
 
   writeValue(value) {
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       this.value = value;
     } else {
       this.value = null;
@@ -206,7 +216,7 @@ export class FormFirebaseFileComponent extends FormBase<FormFileObject>
     this.dialog.open(PreviewImagePopupComponent, {
       data: imageurl,
       hasBackdrop: true,
-      disableClose: false
+      disableClose: false,
     });
   }
 
