@@ -1,55 +1,52 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule } from '@angular/core';
+import { AppRoutingModule } from './app.routing';
+import { BrowserModule } from "@angular/platform-browser";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { NgModule } from "@angular/core";
 
-import { AppComponent } from './app.component';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { RouterModule, Routes } from '@angular/router';
+import { AppComponent } from "./app.component";
+import { CommonModule } from "@angular/common";
+import { ReactiveFormsModule, FormsModule } from "@angular/forms";
+
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatTabsModule } from "@angular/material/tabs";
+import { MatIconModule } from "@angular/material/icon";
+import { MatButtonModule } from "@angular/material/button";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+
+import { MatFirebaseUploadModule } from './from-lib';
+
 import {
-  MatTabsModule,
-  MatIconModule,
-  MatButtonModule,
-  MatSlideToggleModule
-} from '@angular/material';
-import { MatFirebaseUploadModule } from '../../../mat-firebase-upload/src/public-api';
-import { TestFormFilesComponent } from './test-form-files.component';
-import { TestFormFileComponent } from './test-form-file.component';
-import { TestFormImageComponent } from './test-form-image.component';
-import { TestFormViewersComponent } from './test-form-viewers.component';
+  TestFormFilesComponent,
+  TestFormFileComponent,
+  TestFormImageComponent,
+  TestFormViewersComponent,
+} from "./components";
 
 const entryComponents = [
   TestFormFilesComponent,
   TestFormFileComponent,
   TestFormImageComponent,
-  TestFormViewersComponent
-];
-
-const allRoutes: Routes = [
-  { path: 'form-firebase-file', component: TestFormFileComponent },
-  { path: 'form-firebase-files', component: TestFormFilesComponent },
-  { path: 'form-firebase-image', component: TestFormImageComponent },
-  { path: 'form-firebase-viewers', component: TestFormViewersComponent }
+  TestFormViewersComponent,
 ];
 
 @NgModule({
   declarations: [AppComponent, ...entryComponents],
   entryComponents: [...entryComponents],
   imports: [
+    AppRoutingModule,
     BrowserModule,
     BrowserAnimationsModule,
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
     MatFirebaseUploadModule,
-    RouterModule.forRoot(allRoutes),
-
     MatTabsModule,
+    MatSidenavModule,
     MatButtonModule,
     MatSlideToggleModule,
-    MatIconModule
+    MatIconModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {}

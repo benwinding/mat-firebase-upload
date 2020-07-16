@@ -7,7 +7,7 @@ import {
   MatButtonModule,
   MatIconModule,
   MatProgressSpinnerModule
-} from '@angular/material';
+} from '../../../material-imports';
 import { PreviewImagePopupComponent } from './components/preview-image-popup.component';
 import { LibImgWithLoaderComponent } from './components/img-with-loader.component';
 

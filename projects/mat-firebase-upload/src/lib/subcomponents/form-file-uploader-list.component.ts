@@ -1,6 +1,6 @@
 import { EventEmitter, Component, Input, Output } from '@angular/core';
 import { FormFileObject } from '../FormFileObject';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { PreviewImagePopupComponent } from './preview-images/components/preview-image-popup.component';
 
 @Component({

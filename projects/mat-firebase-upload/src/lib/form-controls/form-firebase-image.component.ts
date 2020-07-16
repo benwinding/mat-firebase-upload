@@ -13,7 +13,7 @@ import { Subject } from 'rxjs';
 import { takeUntil, map, tap } from 'rxjs/operators';
 import { FormBase } from '../form-base-class';
 import { NotificationService } from '../utils/notification.service';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { PreviewImagePopupComponent } from '../subcomponents/preview-images/components/preview-image-popup.component';
 import { UploadsManager } from '../firebase/uploads-manager';
 import { FormFirebaseImageConfiguration } from '../FormFirebaseFileConfiguration';

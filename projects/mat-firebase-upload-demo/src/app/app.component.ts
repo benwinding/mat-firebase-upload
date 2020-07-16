@@ -1,20 +1,58 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { allRoutes } from './app.routing';
 
 @Component({
   selector: 'app-root',
   template: `
-    <ul>
-      <h1>Mat Firebase Upload</h1>
-      <li><a routerLink="form-firebase-file">form-firebase-file</a></li>
-      <li><a routerLink="form-firebase-files">form-firebase-files</a></li>
-      <li><a routerLink="form-firebase-image">form-firebase-image</a></li>
-      <li><a routerLink="form-firebase-viewers">form-firebase-viewers</a></li>
-    </ul>
-    <router-outlet> </router-outlet>
-  `
+    <!--The content below is only a placeholder and can be replaced.-->
+    <h2>Mat-Firebase-Upload Demo</h2>
+    <mat-drawer-container style="height: 90vh;">
+      <mat-drawer mode="side" opened>
+        <nav>
+          <a
+            *ngFor="let linkItem of linkItems"
+            [routerLink]="[linkItem.path]"
+            routerLinkActive="active"
+            #rla="routerLinkActive"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            {{ linkItem.path }}
+          </a>
+        </nav>
+      </mat-drawer>
+      <mat-drawer-content>
+        <div style="padding: 10px;">
+          <router-outlet></router-outlet>
+        </div>
+      </mat-drawer-content>
+    </mat-drawer-container>
+  `,
+  styles: [
+    `
+      nav {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        overflow: hidden;
+        width: 250px;
+      }
+      nav a,
+      nav a:visited {
+        text-decoration: none;
+        color: black;
+      }
+      nav a {
+        padding: 8px;
+        width: 100%;
+        font-family: sans-serif;
+      }
+      .active {
+        font-weight: bold;
+        border-bottom: 1px solid red;
+      }
+    `,
+  ],
 })
-export class AppComponent implements OnInit {
-  constructor() {}
-
-  async ngOnInit() {}
+export class AppComponent {
+  linkItems = allRoutes;
 }

@@ -1,10 +1,11 @@
 {
   "name": "mat-firebase-upload",
   "description": "An easy-to-use Upload mat-form-field for Angular and Firebase",
-  "version": "1.2.0",
+  "version": "10.0.0",
   "peerDependencies": {
-    "@angular/common": "7.2.x | 8.x",
-    "@angular/core": "7.2.x | 8.x",
+    "@angular/common": "10.x",
+    "@angular/material": "10.x",
+    "@angular/core": "10.x",
     "firebase": "6 | 7"
   },
   "homepage": "https://github.com/benwinding/mat-firebase-upload",

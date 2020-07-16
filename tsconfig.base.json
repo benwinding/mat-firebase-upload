@@ -1,0 +1,36 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "sourceMap": true,
+    "declaration": false,
+    "module": "es2015",
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es5",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2018",
+      "dom"
+    ],
+    "paths": {
+      "mat-firebase-upload": [
+        "dist/mat-firebase-upload"
+      ],
+      "mat-firebase-upload/*": [
+        "dist/mat-firebase-upload/*"
+      ]
+    }
+  },
+  "angularCompilerOptions": {
+    "enableIvy": false,
+    "strictTemplates": true,
+    "strictInjectionParameters": true    
+  }
+}

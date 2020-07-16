@@ -31,9 +31,7 @@
               "projects/mat-firebase-upload/tsconfig.lib.json",
               "projects/mat-firebase-upload/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
@@ -43,12 +41,15 @@
       "sourceRoot": "projects/mat-firebase-upload-demo/src",
       "projectType": "application",
       "prefix": "app",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": {
+          "styleext": "scss"
+        }
+      },
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "baseHref": "mat-firebase-upload",
             "outputPath": "dist/mat-firebase-upload-demo",
             "index": "projects/mat-firebase-upload-demo/src/index.html",
             "main": "projects/mat-firebase-upload-demo/src/main.ts",
@@ -56,18 +57,11 @@
             "tsConfig": "projects/mat-firebase-upload-demo/tsconfig.app.json",
             "assets": [
               "projects/mat-firebase-upload-demo/src/favicon.ico",
-              "projects/mat-firebase-upload-demo/src/assets",
-              {
-                "glob": "**/*",
-                "input": "projects/mat-firebase-upload/src/assets/fileicons",
-                "output": "./assets/fileicons"
-              }
+              "projects/mat-firebase-upload-demo/src/assets"
             ],
-            "styles": [
-              "projects/mat-firebase-upload-demo/src/styles.css"
-            ],
+            "styles": ["projects/mat-firebase-upload-demo/src/styles.scss"],
             "scripts": [],
-            "es5BrowserSupport": true
+            "preserveSymlinks": true
           },
           "configurations": {
             "production": {
@@ -77,16 +71,16 @@
                   "with": "projects/mat-firebase-upload-demo/src/environments/environment.prod.ts"
                 }
               ],
-              "baseHref" : "/mat-firebase-upload/",
-              "optimization": true,
+              "baseHref": "/mat-firebase-upload/",
+              "optimization": false,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
+              "extractCss": false,
               "namedChunks": false,
-              "aot": true,
-              "extractLicenses": true,
+              "aot": false,
+              "extractLicenses": false,
               "vendorChunk": false,
-              "buildOptimizer": true,
+              "buildOptimizer": false,
               "budgets": [
                 {
                   "type": "initial",
@@ -100,8 +94,7 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "mat-firebase-upload-demo:build",
-            "baseHref": "/"
+            "browserTarget": "mat-firebase-upload-demo:build"
           },
           "configurations": {
             "production": {
@@ -122,9 +115,7 @@
             "polyfills": "projects/mat-firebase-upload-demo/src/polyfills.ts",
             "tsConfig": "projects/mat-firebase-upload-demo/tsconfig.spec.json",
             "karmaConfig": "projects/mat-firebase-upload-demo/karma.conf.js",
-            "styles": [
-              "projects/mat-firebase-upload-demo/src/styles.css"
-            ],
+            "styles": ["projects/mat-firebase-upload-demo/src/styles.scss"],
             "scripts": [],
             "assets": [
               "projects/mat-firebase-upload-demo/src/favicon.ico",
@@ -139,9 +130,7 @@
               "projects/mat-firebase-upload-demo/tsconfig.app.json",
               "projects/mat-firebase-upload-demo/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         }
       }

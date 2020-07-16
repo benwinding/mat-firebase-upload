@@ -12,7 +12,7 @@ import { FormFileObject } from "../FormFileObject";
 import { Subject } from "rxjs";
 import { FormBase } from "../form-base-class";
 import { NotificationService } from "../utils/notification.service";
-import { MatDialog } from "@angular/material";
+import { MatDialog } from "@angular/material/dialog";
 import { UploadsManager } from "../firebase/uploads-manager";
 import { takeUntil, map } from "rxjs/operators";
 import { FormFirebaseFileConfiguration } from "../FormFirebaseFileConfiguration";

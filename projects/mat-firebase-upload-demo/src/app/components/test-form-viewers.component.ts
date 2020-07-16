@@ -1,34 +1,47 @@
 import { Component, OnInit } from '@angular/core';
 import { blankFile, makeConfig } from './file-factory';
 import { FormControl } from '@angular/forms';
-import { FormFirebaseFilesConfiguration } from '../../../mat-firebase-upload/src/public-api';
-import { delay } from 'rxjs/operators';
+import { FormFirebaseFilesConfiguration } from '../from-lib';
 
 @Component({
   template: `
-    <h2>Files Uploader/Viewer Control</h2>
+    <h2>File Uploader/Viewer Control</h2>
     <div>
       <h5>Control Enabled({{ enabledControl.value | json }})</h5>
       <mat-slide-toggle [formControl]="enabledControl"> </mat-slide-toggle>
     </div>
+    <h2>Files Viewer Only</h2>
     <div class="container-2cols">
-      <form-firebase-files
-        [formControl]="controlFiles"
-        [config]="config"
-        debug="true"
-      >
-      </form-firebase-files>
+      <form-firebase-files-viewer [value]="controlFiles.value">
+      </form-firebase-files-viewer>
       <pre>{{ controlFiles?.value | json }}</pre>
     </div>
+    <h2>Image With Loader</h2>
+    <div class="container-2cols">
+      <img-with-loader [src]="imgUrl"></img-with-loader>
+      <pre>{{ imgUrl | json }}</pre>
+    </div>
+    <h2>Image Gallery</h2>
+    <div class="container-2cols">
+      <preview-gallery [imageUrls]="imgUrls"> </preview-gallery>
+      <pre>{{ imgUrls | json }}</pre>
+    </div>
+
   `
 })
-export class TestFormFilesComponent implements OnInit {
+export class TestFormViewersComponent implements OnInit {
   enabledControl = new FormControl(true);
+  config: FormFirebaseFilesConfiguration;
+
   controlFiles = new FormControl([
     blankFile('https://i.imgur.com/uUL3zYD.jpg'),
     blankFile('https://i.imgur.com/HSdYMMN.jpg')
   ]);
-  config: FormFirebaseFilesConfiguration;
+  imgUrl = 'https://i.imgur.com/uUL3zYD.jpg';
+  imgUrls = [
+    'https://i.imgur.com/uUL3zYD.jpg',
+    'https://i.imgur.com/HSdYMMN.jpg'
+  ];
 
   constructor() {
     this.enabledControl.valueChanges.subscribe(isEnabled => {
@@ -41,7 +54,6 @@ export class TestFormFilesComponent implements OnInit {
   }
 
   async ngOnInit() {
-    await delay(1000);
-    this.config = await makeConfig(2000);
+    this.config = await makeConfig();
   }
 }

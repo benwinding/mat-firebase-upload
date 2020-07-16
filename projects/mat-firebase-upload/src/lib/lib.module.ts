@@ -9,7 +9,7 @@ import {
   MatProgressSpinnerModule,
   MatButtonModule,
   MatTooltipModule
-} from '@angular/material';
+} from '../material-imports';
 import { CommonModule } from '@angular/common';
 import { NotificationService } from './utils/notification.service';
 import { FormFileUploadedFileListComponent } from './subcomponents/form-file-uploader-list.component';
