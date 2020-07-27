@@ -11,7 +11,7 @@ import { allRoutes } from './app.routing';
         <nav>
           <a
             *ngFor="let linkItem of linkItems"
-            [routerLink]="[linkItem.path]"
+            [routerLink]="['/' + linkItem.path]"
             routerLinkActive="active"
             #rla="routerLinkActive"
             [routerLinkActiveOptions]="{ exact: true }"
