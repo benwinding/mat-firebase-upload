@@ -409,46 +409,40 @@ var FormBase = /** @class */ (function () {
     function FormBase() {
         var _this = this;
         this.internalControl = new _angular_forms__WEBPACK_IMPORTED_MODULE_0__["FormControl"]();
-        this._destroyed = new rxjs__WEBPACK_IMPORTED_MODULE_1__["Subject"]();
         this.disabled = false;
+        this.$nginit = new rxjs__WEBPACK_IMPORTED_MODULE_1__["Subject"]();
+        this.$ngdestroy = new rxjs__WEBPACK_IMPORTED_MODULE_1__["Subject"]();
+        this._destroyed = new rxjs__WEBPACK_IMPORTED_MODULE_1__["Subject"]();
         this.propagateOnChange = function () { };
         this.onTouched = function () { };
-        // Garrentee that init and destroy are called
-        // even if ngOnInit() or ngOnDestroy() are overriden
-        var originalOnDestroy = this.ngOnDestroy;
-        this.ngOnDestroy = function () {
-            _this.destroy();
-            originalOnDestroy.apply(_this);
-        };
-        var originalOnInit = this.ngOnInit;
-        this.ngOnInit = function () {
-            _this.init();
-            originalOnInit.apply(_this);
-        };
+        this.$nginit.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["take"])(1)).subscribe(function () { return _this._init(); });
+        this.$ngdestroy.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["take"])(1)).subscribe(function () { return _this._destroy(); });
     }
-    // These will most likely be overriden
-    FormBase.prototype.ngOnInit = function () { };
-    FormBase.prototype.ngOnDestroy = function () { };
-    FormBase.prototype.init = function () {
+    FormBase.prototype.ngOnInit = function () {
+        this.$nginit.next();
+    };
+    FormBase.prototype.ngOnDestroy = function () {
+        this.$ngdestroy.next();
+    };
+    FormBase.prototype._init = function () {
         var _this = this;
-        this.logger = new _utils_simple_logger__WEBPACK_IMPORTED_MODULE_6__["SimpleLogger"](this.debug, '[form-base-class]');
-        this._destroyed.next();
+        this.logger = new _utils_simple_logger__WEBPACK_IMPORTED_MODULE_6__["SimpleLogger"](this.debug, "[form-base-class]");
         this.autoCompleteObscureName = Object(uuid__WEBPACK_IMPORTED_MODULE_5__["v4"])();
         this.internalControl.valueChanges
             .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["takeUntil"])(this._destroyed))
             .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["auditTime"])(100))
             .subscribe(function (value) {
             _this._value = value;
-            _this.logger.log('internalControl.valueChanges()', { value: value });
+            _this.logger.log("internalControl.valueChanges()", { value: value });
             _this.onChange(_this._value);
             _this.onTouched();
         });
         if (!this.placeholder) {
-            var nameParsed = Object(_utils_case_helper__WEBPACK_IMPORTED_MODULE_4__["ConvertToTitleCase"])(this.formControlName + '');
+            var nameParsed = Object(_utils_case_helper__WEBPACK_IMPORTED_MODULE_4__["ConvertToTitleCase"])(this.formControlName + "");
             this.placeholder = nameParsed;
         }
     };
-    FormBase.prototype.destroy = function () {
+    FormBase.prototype._destroy = function () {
         this._destroyed.next();
     };
     Object.defineProperty(FormBase.prototype, "value", {
@@ -456,7 +450,7 @@ var FormBase = /** @class */ (function () {
             return this._value;
         },
         set: function (value) {
-            this.logger.log('this.set value()', { value: value });
+            this.logger.log("this.set value()", { value: value });
             this._value = value;
             this.internalControl.setValue(value, { emitEvent: true });
         },
@@ -487,14 +481,14 @@ var FormBase = /** @class */ (function () {
     FormBase.prototype.validate = function (c) {
         var errors = c.errors;
         var value = c.value;
-        this.logger.log('form-base-class: validate()', { errors: errors, value: value });
+        this.logger.log("form-base-class: validate()", { errors: errors, value: value });
         this.internalControl.setValidators(c.validator);
         return !this.validationError
             ? null
             : {
                 validationError: {
-                    valid: false
-                }
+                    valid: false,
+                },
             };
     };
     FormBase.prototype.onChange = function (inputValue) {
@@ -630,6 +624,7 @@ var FormFirebaseFileComponent = /** @class */ (function (_super) {
         _this.isDraggingOnTop = false;
         _this.hasLoaded = false;
         _this.hasError = false;
+        _this.$ngdestroy.subscribe(function () { return _this.destroyUploadManager(); });
         return _this;
     }
     FormFirebaseFileComponent_1 = FormFirebaseFileComponent;
@@ -644,10 +639,6 @@ var FormFirebaseFileComponent = /** @class */ (function (_super) {
         enumerable: false,
         configurable: true
     });
-    FormFirebaseFileComponent.prototype.ngOnInit = function () { };
-    FormFirebaseFileComponent.prototype.ngOnDestroy = function () {
-        this.destroyUploadManager();
-    };
     FormFirebaseFileComponent.prototype.destroyUploadManager = function () {
         this.destroyed.next();
         if (this.um) {
@@ -845,6 +836,7 @@ var FormFirebaseFilesComponent = /** @class */ (function (_super) {
         _this.uploadStatusChanged = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"]();
         _this.destroyed = new rxjs__WEBPACK_IMPORTED_MODULE_3__["Subject"]();
         _this.isDraggingOnTop = false;
+        _this.$ngdestroy.subscribe(function () { return _this.destroyUploadManager(); });
         return _this;
     }
     FormFirebaseFilesComponent_1 = FormFirebaseFilesComponent;
@@ -872,10 +864,6 @@ var FormFirebaseFilesComponent = /** @class */ (function (_super) {
             value = [];
         }
         this.value = value;
-    };
-    FormFirebaseFilesComponent.prototype.ngOnInit = function () { };
-    FormFirebaseFilesComponent.prototype.ngOnDestroy = function () {
-        this.destroyUploadManager();
     };
     FormFirebaseFilesComponent.prototype.destroyUploadManager = function () {
         this.destroyed.next();
@@ -952,13 +940,13 @@ var FormFirebaseFilesComponent = /** @class */ (function (_super) {
                 {
                     provide: _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NG_VALUE_ACCESSOR"],
                     useExisting: Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["forwardRef"])(function () { return FormFirebaseFilesComponent_1; }),
-                    multi: true
+                    multi: true,
                 },
                 {
                     provide: _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NG_VALIDATORS"],
                     useExisting: Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["forwardRef"])(function () { return FormFirebaseFilesComponent_1; }),
-                    multi: true
-                }
+                    multi: true,
+                },
             ],
             styles: ["\n      .custom-file-upload {\n        border: 4px dashed #eee;\n        display: inline-block;\n        padding: 35px 0px;\n        cursor: pointer;\n        width: calc(100% - 8px);\n        text-align: center;\n        font-size: 1.5em;\n        color: #777;\n      }\n      .custom-file-upload.disabled {\n        background: #eee;\n      }\n      .dragover {\n        background: #ddd;\n      }\n      .max-files {\n        font-size: 0.9em;\n        color: orange;\n        font-style: italic;\n      }\n      .flex-v {\n        display: flex;\n        align-items: center;\n        flex-direction: column;\n      }\n    "]
         }),
@@ -1080,6 +1068,7 @@ var FormFirebaseImageComponent = /** @class */ (function (_super) {
         _this.isDraggingOnTop = false;
         _this.hasLoaded = false;
         _this.hasError = false;
+        _this.$ngdestroy.subscribe(function () { return _this.destroyUploadManager(); });
         return _this;
     }
     FormFirebaseImageComponent_1 = FormFirebaseImageComponent;
@@ -1109,10 +1098,6 @@ var FormFirebaseImageComponent = /** @class */ (function (_super) {
         else {
             this.value = null;
         }
-    };
-    FormFirebaseImageComponent.prototype.ngOnInit = function () { };
-    FormFirebaseImageComponent.prototype.ngOnDestroy = function () {
-        this.destroyUploadManager();
     };
     FormFirebaseImageComponent.prototype.destroyUploadManager = function () {
         this.destroyed.next();
