@@ -1,16 +1,15 @@
-import { ControlValueAccessor, FormControl, Validator } from '@angular/forms';
-import { Subject } from 'rxjs';
-import { OnDestroy, OnInit, Input } from '@angular/core';
-import { takeUntil, auditTime } from 'rxjs/operators';
-import { ConvertToTitleCase } from './utils/case-helper';
-import { v4 as uuidv4 } from 'uuid';
-import { SimpleLogger } from './utils/simple-logger';
+import { ControlValueAccessor, FormControl, Validator } from "@angular/forms";
+import { Subject } from "rxjs";
+import { OnDestroy, OnInit, Input } from "@angular/core";
+import { takeUntil, auditTime, take } from "rxjs/operators";
+import { ConvertToTitleCase } from "./utils/case-helper";
+import { v4 as uuidv4 } from "uuid";
+import { SimpleLogger } from "./utils/simple-logger";
 
 export class FormBase<T>
   implements OnInit, OnDestroy, ControlValueAccessor, Validator {
   internalControl: FormControl = new FormControl();
   autoCompleteObscureName: string;
-  _destroyed = new Subject();
 
   disabled = false;
   validationError: string;
@@ -26,46 +25,43 @@ export class FormBase<T>
 
   logger: SimpleLogger;
 
+  $nginit = new Subject();
+  $ngdestroy = new Subject();
+  _destroyed = new Subject();
+
   constructor() {
-    // Garrentee that init and destroy are called
-    // even if ngOnInit() or ngOnDestroy() are overriden
-    const originalOnDestroy = this.ngOnDestroy;
-    this.ngOnDestroy = () => {
-      this.destroy();
-      originalOnDestroy.apply(this);
-    };
-    const originalOnInit = this.ngOnInit;
-    this.ngOnInit = () => {
-      this.init();
-      originalOnInit.apply(this);
-    };
+    this.$nginit.pipe(take(1)).subscribe(() => this._init());
+    this.$ngdestroy.pipe(take(1)).subscribe(() => this._destroy());
   }
 
-  // These will most likely be overriden
-  ngOnInit() {}
-  ngOnDestroy() {}
+  ngOnInit() {
+    this.$nginit.next();
+  }
 
-  init() {
-    this.logger = new SimpleLogger(this.debug, '[form-base-class]');
-    this._destroyed.next();
+  ngOnDestroy() {
+    this.$ngdestroy.next();
+  }
+
+  private _init() {
+    this.logger = new SimpleLogger(this.debug, "[form-base-class]");
     this.autoCompleteObscureName = uuidv4();
     this.internalControl.valueChanges
       .pipe(takeUntil(this._destroyed))
       .pipe(auditTime(100))
       .subscribe((value) => {
         this._value = value;
-        this.logger.log('internalControl.valueChanges()', {value});
+        this.logger.log("internalControl.valueChanges()", { value });
         this.onChange(this._value);
         this.onTouched();
       });
 
     if (!this.placeholder) {
-      const nameParsed = ConvertToTitleCase(this.formControlName + '');
+      const nameParsed = ConvertToTitleCase(this.formControlName + "");
       this.placeholder = nameParsed;
     }
   }
 
-  destroy() {
+  private _destroy() {
     this._destroyed.next();
   }
 
@@ -74,7 +70,7 @@ export class FormBase<T>
   }
 
   set value(value) {
-    this.logger.log('this.set value()', {value});
+    this.logger.log("this.set value()", { value });
     this._value = value;
     this.internalControl.setValue(value, { emitEvent: true });
   }
@@ -107,14 +103,14 @@ export class FormBase<T>
   public validate(c: FormControl) {
     const errors = c.errors;
     const value = c.value;
-    this.logger.log('form-base-class: validate()', { errors, value });
+    this.logger.log("form-base-class: validate()", { errors, value });
     this.internalControl.setValidators(c.validator);
     return !this.validationError
       ? null
       : {
           validationError: {
-            valid: false
-          }
+            valid: false,
+          },
         };
   }
 
