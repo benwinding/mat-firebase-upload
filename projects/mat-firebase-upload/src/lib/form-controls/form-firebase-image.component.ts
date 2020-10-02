@@ -35,6 +35,7 @@ import { SimpleLogger } from '../utils/simple-logger';
           placeholder="placeholder"
           type="file"
           [disabled]="disabled"
+          [attr.disabled]="disableUpload ? '' : null"
           (change)="onFileInputChange($event)"
           accept="image/*"
         />
@@ -53,13 +54,25 @@ import { SimpleLogger } from '../utils/simple-logger';
             <button
               mat-mini-fab
               color="secondary"
-              class="remove-btn"
+              class="close-btn"
               [disabled]="disabled"
-              (click)="clickRemoveTag(value)"
+              (click)="clickReplaceTag(value)"
               matTooltip="Click to replace current image"
             >
               <mat-icon>
                 swap_horiz
+              </mat-icon>
+            </button>
+            <button
+              mat-mini-fab
+              color="secondary"
+              class="remove-btn"
+              [disabled]="disabled"
+              (click)="clickRemoveTag()"
+              matTooltip="Click to remove image"
+            >
+              <mat-icon>
+                delete
               </mat-icon>
             </button>
             <img
@@ -112,6 +125,11 @@ import { SimpleLogger } from '../utils/simple-logger';
         cursor: pointer;
       }
       .remove-btn {
+        position: absolute;
+        right: 50px;
+        top: 5px;
+      }
+      .close-btn {
         position: absolute;
         right: 5px;
         top: 5px;
@@ -188,6 +206,7 @@ export class FormFirebaseImageComponent extends FormBase<FormFileObject> {
 
   hasLoaded = false;
   hasError = false;
+  disableUpload = false;
   private um: UploadsManager;
 
   constructor(public ns: NotificationService, private dialog: MatDialog) {
@@ -243,11 +262,19 @@ export class FormFirebaseImageComponent extends FormBase<FormFileObject> {
     });
   }
 
-  async clickRemoveTag(fileObject: FormFileObject) {
+  async clickReplaceTag(fileObject: FormFileObject) {
     this.value = null;
     this.hasError = false;
     this.hasLoaded = false;
     this.um.clickRemoveTag(fileObject);
+  }
+
+  async clickRemoveTag() {
+    this.disabled = true;
+    setTimeout(() =>{
+      this.disabled = false;
+    }, 100);
+    this.value = null;
   }
 
   onFileInputChange(event) {
