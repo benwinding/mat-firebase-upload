@@ -35,7 +35,6 @@ import { SimpleLogger } from '../utils/simple-logger';
           placeholder="placeholder"
           type="file"
           [disabled]="disabled"
-          [attr.disabled]="disableUpload ? '' : null"
           (change)="onFileInputChange($event)"
           accept="image/*"
         />
@@ -206,7 +205,6 @@ export class FormFirebaseImageComponent extends FormBase<FormFileObject> {
 
   hasLoaded = false;
   hasError = false;
-  disableUpload = false;
   private um: UploadsManager;
 
   constructor(public ns: NotificationService, private dialog: MatDialog) {
