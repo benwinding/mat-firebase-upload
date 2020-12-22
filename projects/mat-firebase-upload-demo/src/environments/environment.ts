@@ -5,13 +5,12 @@
 export const environment = {
   production: false,
   firebaseConfig: {
-    apiKey: "AIzaSyCFRhO6L9ryiWKghczZhn2HQ63T6tZFHHA",
-    authDomain: "test1-3355b.firebaseapp.com",
-    databaseURL: "https://test1-3355b.firebaseio.com",
-    projectId: "test1-3355b",
-    storageBucket: "test1-3355b.appspot.com",
-    messagingSenderId: "1040615845296",
-    appId: "1:1040615845296:web:b30ccaf3ee634287",
+    apiKey: "AIzaSyD-Jzyaw1q5z_UQdTHWGVf90lF0A29pZs8",
+    authDomain: "benwinding-github.firebaseapp.com",
+    projectId: "benwinding-github",
+    storageBucket: "benwinding-github.appspot.com",
+    messagingSenderId: "665752279816",
+    appId: "1:665752279816:web:d2e183483546598f34eabd"
   },
 };
 

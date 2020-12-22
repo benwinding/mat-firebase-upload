@@ -12,11 +12,18 @@ export const allRoutes: Routes = [
   { path: "form-firebase-files", component: TestFormFilesComponent },
   { path: "form-firebase-image", component: TestFormImageComponent },
   { path: "form-firebase-viewers", component: TestFormViewersComponent },
-  { path: "**", redirectTo: "form-firebase-file" }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(allRoutes)],
+  imports: [
+    RouterModule.forRoot([
+      {
+        path: "",
+        children: allRoutes,
+      },
+      { path: "**", redirectTo: "form-firebase-file" },
+    ]),
+  ],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}
