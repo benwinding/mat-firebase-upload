@@ -3198,14 +3198,14 @@ __webpack_require__.r(__webpack_exports__);
 var environment = {
     production: false,
     firebaseConfig: {
-        apiKey: 'AIzaSyBaaNXOsruNPyDrQpKEnw-S-BnvwKlTfR4',
-        authDomain: 'comm-unstable.firebaseapp.com',
-        databaseURL: 'https://comm-unstable.firebaseio.com',
-        projectId: 'comm-unstable',
-        storageBucket: 'comm-unstable.appspot.com',
-        messagingSenderId: '1061697142615',
-        appId: '1:1061697142615:web:23f9c7b10d97acfe'
-    }
+        apiKey: "AIzaSyCFRhO6L9ryiWKghczZhn2HQ63T6tZFHHA",
+        authDomain: "test1-3355b.firebaseapp.com",
+        databaseURL: "https://test1-3355b.firebaseio.com",
+        projectId: "test1-3355b",
+        storageBucket: "test1-3355b.appspot.com",
+        messagingSenderId: "1040615845296",
+        appId: "1:1040615845296:web:b30ccaf3ee634287",
+    },
 };
 /*
  * For easier debugging in development mode, you can import the following file
