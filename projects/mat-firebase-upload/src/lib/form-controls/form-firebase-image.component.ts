@@ -1,8 +1,6 @@
 import {
   Component,
   forwardRef,
-  OnInit,
-  OnDestroy,
   Input,
   Output,
   EventEmitter
@@ -55,13 +53,25 @@ import { SimpleLogger } from '../utils/simple-logger';
             <button
               mat-mini-fab
               color="secondary"
-              class="remove-btn"
+              class="close-btn"
               [disabled]="disabled"
-              (click)="clickRemoveTag(value)"
+              (click)="clickReplaceTag(value)"
               matTooltip="Click to replace current image"
             >
               <mat-icon>
                 swap_horiz
+              </mat-icon>
+            </button>
+            <button
+              mat-mini-fab
+              color="secondary"
+              class="remove-btn"
+              [disabled]="disabled"
+              (click)="clickRemoveTag()"
+              matTooltip="Click to remove image"
+            >
+              <mat-icon>
+                delete
               </mat-icon>
             </button>
             <img
@@ -115,6 +125,11 @@ import { SimpleLogger } from '../utils/simple-logger';
       }
       .remove-btn {
         position: absolute;
+        right: 50px;
+        top: 5px;
+      }
+      .close-btn {
+        position: absolute;
         right: 5px;
         top: 5px;
       }
@@ -161,8 +176,7 @@ import { SimpleLogger } from '../utils/simple-logger';
     }
   ]
 })
-export class FormFirebaseImageComponent extends FormBase<FormFileObject>
-  implements OnInit, OnDestroy {
+export class FormFirebaseImageComponent extends FormBase<FormFileObject> {
   @Input()
   placeholder = 'Attached Files';
   @Input()
@@ -195,6 +209,7 @@ export class FormFirebaseImageComponent extends FormBase<FormFileObject>
 
   constructor(public ns: NotificationService, private dialog: MatDialog) {
     super();
+    this.$ngdestroy.subscribe(() => this.destroyUploadManager());
   }
 
   writeValue(value) {
@@ -203,11 +218,6 @@ export class FormFirebaseImageComponent extends FormBase<FormFileObject>
     } else {
       this.value = null;
     }
-  }
-
-  ngOnInit() {}
-  ngOnDestroy() {
-    this.destroyUploadManager();
   }
 
   destroyUploadManager() {
@@ -250,11 +260,19 @@ export class FormFirebaseImageComponent extends FormBase<FormFileObject>
     });
   }
 
-  async clickRemoveTag(fileObject: FormFileObject) {
+  async clickReplaceTag(fileObject: FormFileObject) {
     this.value = null;
     this.hasError = false;
     this.hasLoaded = false;
     this.um.clickRemoveTag(fileObject);
+  }
+
+  async clickRemoveTag() {
+    this.disabled = true;
+    setTimeout(() =>{
+      this.disabled = false;
+    }, 100);
+    this.value = null;
   }
 
   onFileInputChange(event) {

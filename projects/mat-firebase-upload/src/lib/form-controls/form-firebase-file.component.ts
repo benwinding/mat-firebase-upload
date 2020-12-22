@@ -1,8 +1,6 @@
 import {
   Component,
   forwardRef,
-  OnInit,
-  OnDestroy,
   Input,
   Output,
   EventEmitter,
@@ -135,8 +133,7 @@ import { SimpleLogger } from "../utils/simple-logger";
     },
   ],
 })
-export class FormFirebaseFileComponent extends FormBase<FormFileObject>
-  implements OnInit, OnDestroy {
+export class FormFirebaseFileComponent extends FormBase<FormFileObject> {
   @Input()
   placeholder = "Uploaded File";
   @Input()
@@ -166,11 +163,7 @@ export class FormFirebaseFileComponent extends FormBase<FormFileObject>
 
   constructor(public ns: NotificationService, private dialog: MatDialog) {
     super();
-  }
-
-  ngOnInit() {}
-  ngOnDestroy() {
-    this.destroyUploadManager();
+    this.$ngdestroy.subscribe(() => this.destroyUploadManager());
   }
 
   destroyUploadManager() {
