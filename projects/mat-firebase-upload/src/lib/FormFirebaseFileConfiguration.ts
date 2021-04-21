@@ -8,6 +8,7 @@ export interface FormFirebaseConfigurationBase {
   acceptedFiles?: 'image/*' | 'application/pdf' | 'image/*,application/*' |  string;
   useUuidName?: boolean;
   deleteOnStorage?: boolean;
+  canEditFileNames?: boolean;
 }
 
 export type FormFirebaseImageConfiguration = FormFirebaseConfigurationBase;

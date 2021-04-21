@@ -2,6 +2,8 @@ import { EventEmitter, Component, Input, Output } from '@angular/core';
 import { FormFileObject } from '../FormFileObject';
 import { MatDialog } from '@angular/material/dialog';
 import { PreviewImagePopupComponent } from './preview-images/components/preview-image-popup.component';
+import { take } from 'rxjs/operators';
+import { RenameImagePopupComponent } from './rename-image/components/rename-image-popup.component';
 
 @Component({
   selector: 'lib-uploaded-files-list',
@@ -17,6 +19,10 @@ import { PreviewImagePopupComponent } from './preview-images/components/preview-
               <span class="has-ellipsis">{{ file.value.name }}</span>
               <mat-icon class="i-open">open_in_new</mat-icon>
             </a>
+            <mat-icon
+            class="has-pointer"
+            (click)="editFileName(file)"
+            >edit</mat-icon>
           </div>
           <div class="flex-h">
             <div class="flex-h" *ngIf="file['imageurl'] as imageurl">
@@ -142,4 +148,21 @@ export class FormFileUploadedFileListComponent {
     }
     return false;
   }
+  
+  async editFileName(file: FormFileObject){
+
+    const renameDialog = this.dialog.open(RenameImagePopupComponent, {
+      data: file.value.name,
+      hasBackdrop: true,
+      disableClose: false
+    });
+
+    const newNameValue = await renameDialog.afterClosed().pipe(take(1)).toPromise();
+    console.log('Form Submitted', newNameValue)
+    if(!newNameValue){
+      return;
+    }
+    file.value.name = newNameValue;
+  }
+
 }

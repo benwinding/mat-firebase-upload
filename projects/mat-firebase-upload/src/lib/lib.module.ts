@@ -18,6 +18,7 @@ import { FormFirebaseFilesComponent } from './form-controls/form-firebase-files.
 import { FormFirebaseFilesViewerComponent } from './subcomponents/form-firebase-files-viewer.component';
 import { FormFirebaseFileComponent } from './form-controls/form-firebase-file.component';
 import { LibPreviewImagesModule } from './subcomponents/preview-images/lib-preview-images.module';
+import { LibRenameImagesModule } from './subcomponents/rename-image/lib-rename-image.module';
 
 const shared = [
   FormFirebaseFilesComponent,
@@ -39,7 +40,8 @@ const shared = [
     MatSnackBarModule,
     MatInputModule,
     MatIconModule,
-    LibPreviewImagesModule
+    LibPreviewImagesModule,
+    LibRenameImagesModule
   ],
   exports: [...shared, LibPreviewImagesModule],
   declarations: [FormFileUploadedFileListComponent, ...shared],
