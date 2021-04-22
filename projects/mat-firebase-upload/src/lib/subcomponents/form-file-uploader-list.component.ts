@@ -21,6 +21,7 @@ import { RenameImagePopupComponent } from './rename-image/components/rename-imag
             </a>
             <mat-icon
             class="has-pointer"
+            *ngIf="canEdit"
             (click)="editFileName(file)"
             >edit</mat-icon>
           </div>
@@ -113,6 +114,8 @@ export class FormFileUploadedFileListComponent {
   placeholder = 'Uploaded Files:';
   @Input()
   disabled: boolean;
+  @Input()
+  canEdit: boolean;
   @Input()
   uploadedFiles: FormFileObject[] = [];
   @Output()

@@ -41,5 +41,6 @@ export class TestFormFileComponent implements OnInit {
     await delay(1000);
     this.controlFile.setValue(blankFile("https://i.imgur.com/ioqsdHZ.jpeg"))
     this.config = await makeConfig(3000);
+    this.config.canEditFileNames = true;
   }
 }

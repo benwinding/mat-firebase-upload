@@ -52,6 +52,7 @@ import { SimpleLogger } from "../utils/simple-logger";
           [disabled]="disabled"
           [uploadedFiles]="[value]"
           (clickRemoveTag)="this.clickRemoveTag($event)"
+          [canEdit]="this.config.canEditFileNames"
         >
         </lib-uploaded-files-list>
       </div>

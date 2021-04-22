@@ -42,6 +42,8 @@ export class TestFormFilesComponent implements OnInit {
 
   async ngOnInit() {
     await delay(1000);
-    this.config = await makeConfig(2000);
+    const config = await makeConfig(2000);
+    config.canEditFileNames = true;
+    this.config = config;
   }
 }
