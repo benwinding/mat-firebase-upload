@@ -716,7 +716,7 @@ var FormFirebaseFileComponent = /** @class */ (function (_super) {
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
             // tslint:disable-next-line: component-selector
             selector: "form-firebase-file",
-            template: "\n    <div class=\"container\">\n      <span class=\"placeholder\">{{ placeholder }}</span>\n      <label\n        class=\"custom-file-upload\"\n        [class.disabled]=\"disabled\"\n        [class.dragover]=\"!disabled && isDraggingOnTop\"\n        (dragover)=\"isDraggingOnTop = true; $event.preventDefault()\"\n        (dragleave)=\"isDraggingOnTop = false\"\n        (drop)=\"isDraggingOnTop = false; onFileDrop($event)\"\n      >\n        <input\n          [hidden]=\"true\"\n          [placeholder]=\"placeholder\"\n          type=\"file\"\n          [disabled]=\"disabled\"\n          (change)=\"onFileInputChange($event)\"\n          [accept]=\"config?.acceptedFiles || 'image/*'\"\n        />\n        <p class=\"upload-message\">\n          {{ uploadMessage }}\n        </p>\n        <i class=\"upload-message\" *ngIf=\"disabled\">\n          (disabled)\n        </i>\n      </label>\n      <div class=\"relative\" *ngIf=\"value?.id\">\n        <lib-uploaded-files-list\n          placeholder=\"Uploaded:\"\n          [disabled]=\"disabled\"\n          [uploadedFiles]=\"[value]\"\n          (clickRemoveTag)=\"this.clickRemoveTag($event)\"\n        >\n        </lib-uploaded-files-list>\n      </div>\n    </div>\n  ",
+            template: "\n    <div class=\"container\">\n      <span class=\"placeholder\">{{ placeholder }}</span>\n      <label\n        class=\"custom-file-upload\"\n        [class.disabled]=\"disabled\"\n        [class.dragover]=\"!disabled && isDraggingOnTop\"\n        (dragover)=\"isDraggingOnTop = true; $event.preventDefault()\"\n        (dragleave)=\"isDraggingOnTop = false\"\n        (drop)=\"isDraggingOnTop = false; onFileDrop($event)\"\n      >\n        <input\n          [hidden]=\"true\"\n          [placeholder]=\"placeholder\"\n          type=\"file\"\n          [disabled]=\"disabled\"\n          (change)=\"onFileInputChange($event)\"\n          [accept]=\"config?.acceptedFiles || 'image/*'\"\n        />\n        <p class=\"upload-message\">\n          {{ uploadMessage }}\n        </p>\n        <i class=\"upload-message\" *ngIf=\"disabled\">\n          (disabled)\n        </i>\n      </label>\n      <div class=\"relative\" *ngIf=\"value?.id\">\n        <lib-uploaded-files-list\n          placeholder=\"Uploaded:\"\n          [disabled]=\"disabled\"\n          [uploadedFiles]=\"[value]\"\n          (clickRemoveTag)=\"this.clickRemoveTag($event)\"\n          [canEdit]=\"this.config.canEditFileNames\"\n        >\n        </lib-uploaded-files-list>\n      </div>\n    </div>\n  ",
             providers: [
                 {
                     provide: _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NG_VALUE_ACCESSOR"],
@@ -935,7 +935,7 @@ var FormFirebaseFilesComponent = /** @class */ (function (_super) {
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
             // tslint:disable-next-line: component-selector
             selector: "form-firebase-files",
-            template: "\n    <div>\n      <label\n        class=\"custom-file-upload\"\n        [class.dragover]=\"!maxReached && !disabled && isDraggingOnTop\"\n        [class.disabled]=\"disabled\"\n        (dragover)=\"isDraggingOnTop = true; $event.preventDefault()\"\n        (dragleave)=\"isDraggingOnTop = false\"\n        (drop)=\"isDraggingOnTop = false; onFileDrop($event)\"\n      >\n        <input\n          *ngIf=\"isMultiple\"\n          [hidden]=\"true\"\n          type=\"file\"\n          multiple\n          [disabled]=\"disabled || maxReached\"\n          (change)=\"onFileInputChange($event)\"\n          [accept]=\"config.acceptedFiles || '*'\"\n        />\n        <input\n          *ngIf=\"!isMultiple\"\n          [hidden]=\"true\"\n          type=\"file\"\n          [disabled]=\"disabled || maxReached\"\n          (change)=\"onFileInputChange($event)\"\n          [accept]=\"config.acceptedFiles || '*'\"\n        />\n        <div class=\"flex-v\">\n          <span *ngIf=\"isConfigLoaded\">\n            {{ placeholder }}\n          </span>\n          <i *ngIf=\"disabled\">\n            (disabled)\n          </i>\n        </div>\n        <span *ngIf=\"!isConfigLoaded\">\n          [config] is waiting for variable config:\n          FormFirebaseFilesConfiguration to resolve\n        </span>\n        <div class=\"max-files\" *ngIf=\"maxReached && !disabled\">\n          Max Uploaded - Limit of {{ config.maxFiles }} file(s) reached. Remove\n          files to change uploads\n        </div>\n      </label>\n      <lib-uploaded-files-list\n        [disabled]=\"disabled\"\n        [uploadedFiles]=\"this.value\"\n        (clickRemoveTag)=\"this.clickRemoveTag($event)\"\n      >\n      </lib-uploaded-files-list>\n    </div>\n  ",
+            template: "\n    <div>\n      <label\n        class=\"custom-file-upload\"\n        [class.dragover]=\"!maxReached && !disabled && isDraggingOnTop\"\n        [class.disabled]=\"disabled\"\n        (dragover)=\"isDraggingOnTop = true; $event.preventDefault()\"\n        (dragleave)=\"isDraggingOnTop = false\"\n        (drop)=\"isDraggingOnTop = false; onFileDrop($event)\"\n      >\n        <input\n          *ngIf=\"isMultiple\"\n          [hidden]=\"true\"\n          type=\"file\"\n          multiple\n          [disabled]=\"disabled || maxReached\"\n          (change)=\"onFileInputChange($event)\"\n          [accept]=\"config.acceptedFiles || '*'\"\n        />\n        <input\n          *ngIf=\"!isMultiple\"\n          [hidden]=\"true\"\n          type=\"file\"\n          [disabled]=\"disabled || maxReached\"\n          (change)=\"onFileInputChange($event)\"\n          [accept]=\"config.acceptedFiles || '*'\"\n        />\n        <div class=\"flex-v\">\n          <span *ngIf=\"isConfigLoaded\">\n            {{ placeholder }}\n          </span>\n          <i *ngIf=\"disabled\">\n            (disabled)\n          </i>\n        </div>\n        <span *ngIf=\"!isConfigLoaded\">\n          [config] is waiting for variable config:\n          FormFirebaseFilesConfiguration to resolve\n        </span>\n        <div class=\"max-files\" *ngIf=\"maxReached && !disabled\">\n          Max Uploaded - Limit of {{ config.maxFiles }} file(s) reached. Remove\n          files to change uploads\n        </div>\n      </label>\n      <lib-uploaded-files-list\n        [disabled]=\"disabled\"\n        [uploadedFiles]=\"this.value\"\n        (clickRemoveTag)=\"this.clickRemoveTag($event)\"\n        [canEdit]=\"this.config.canEditFileNames\"\n      >\n      </lib-uploaded-files-list>\n    </div>\n  ",
             providers: [
                 {
                     provide: _angular_forms__WEBPACK_IMPORTED_MODULE_1__["NG_VALUE_ACCESSOR"],
@@ -1226,6 +1226,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _subcomponents_form_firebase_files_viewer_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./subcomponents/form-firebase-files-viewer.component */ "../mat-firebase-upload/src/lib/subcomponents/form-firebase-files-viewer.component.ts");
 /* harmony import */ var _form_controls_form_firebase_file_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./form-controls/form-firebase-file.component */ "../mat-firebase-upload/src/lib/form-controls/form-firebase-file.component.ts");
 /* harmony import */ var _subcomponents_preview_images_lib_preview_images_module__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./subcomponents/preview-images/lib-preview-images.module */ "../mat-firebase-upload/src/lib/subcomponents/preview-images/lib-preview-images.module.ts");
+/* harmony import */ var _subcomponents_rename_image_lib_rename_image_module__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./subcomponents/rename-image/lib-rename-image.module */ "../mat-firebase-upload/src/lib/subcomponents/rename-image/lib-rename-image.module.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1239,6 +1240,7 @@ var __spreadArrays = (undefined && undefined.__spreadArrays) || function () {
             r[k] = a[j];
     return r;
 };
+
 
 
 
@@ -1273,7 +1275,8 @@ var MatFirebaseUploadModule = /** @class */ (function () {
                 _material_imports__WEBPACK_IMPORTED_MODULE_2__["MatSnackBarModule"],
                 _material_imports__WEBPACK_IMPORTED_MODULE_2__["MatInputModule"],
                 _material_imports__WEBPACK_IMPORTED_MODULE_2__["MatIconModule"],
-                _subcomponents_preview_images_lib_preview_images_module__WEBPACK_IMPORTED_MODULE_10__["LibPreviewImagesModule"]
+                _subcomponents_preview_images_lib_preview_images_module__WEBPACK_IMPORTED_MODULE_10__["LibPreviewImagesModule"],
+                _subcomponents_rename_image_lib_rename_image_module__WEBPACK_IMPORTED_MODULE_11__["LibRenameImagesModule"]
             ],
             exports: __spreadArrays(shared, [_subcomponents_preview_images_lib_preview_images_module__WEBPACK_IMPORTED_MODULE_10__["LibPreviewImagesModule"]]),
             declarations: __spreadArrays([_subcomponents_form_file_uploader_list_component__WEBPACK_IMPORTED_MODULE_5__["FormFileUploadedFileListComponent"]], shared),
@@ -1300,6 +1303,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "../../node_modules/@angular/core/fesm2015/core.js");
 /* harmony import */ var _angular_material_dialog__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/material/dialog */ "../../node_modules/@angular/material/fesm2015/dialog.js");
 /* harmony import */ var _preview_images_components_preview_image_popup_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./preview-images/components/preview-image-popup.component */ "../mat-firebase-upload/src/lib/subcomponents/preview-images/components/preview-image-popup.component.ts");
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs/operators */ "../../node_modules/rxjs/_esm2015/operators/index.js");
+/* harmony import */ var _rename_image_components_rename_image_popup_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./rename-image/components/rename-image-popup.component */ "../mat-firebase-upload/src/lib/subcomponents/rename-image/components/rename-image-popup.component.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1309,6 +1314,44 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 var __metadata = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (undefined && undefined.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+
+
 
 
 
@@ -1344,19 +1387,44 @@ var FormFileUploadedFileListComponent = /** @class */ (function () {
         }
         return false;
     };
+    FormFileUploadedFileListComponent.prototype.editFileName = function (file) {
+        return __awaiter(this, void 0, void 0, function () {
+            var renameDialog, newNameValue;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        renameDialog = this.dialog.open(_rename_image_components_rename_image_popup_component__WEBPACK_IMPORTED_MODULE_4__["RenameImagePopupComponent"], {
+                            data: file.value.name,
+                            hasBackdrop: true,
+                            disableClose: false
+                        });
+                        return [4 /*yield*/, renameDialog.afterClosed().pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["take"])(1)).toPromise()];
+                    case 1:
+                        newNameValue = _a.sent();
+                        console.log('Form Submitted', newNameValue);
+                        if (!newNameValue) {
+                            return [2 /*return*/];
+                        }
+                        file.value.name = newNameValue;
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
     FormFileUploadedFileListComponent.ctorParameters = function () { return [
         { type: _angular_material_dialog__WEBPACK_IMPORTED_MODULE_1__["MatDialog"] }
     ]; };
     FormFileUploadedFileListComponent.propDecorators = {
         placeholder: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }],
         disabled: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }],
+        canEdit: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }],
         uploadedFiles: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"] }],
         clickRemoveTag: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Output"] }]
     };
     FormFileUploadedFileListComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
             selector: 'lib-uploaded-files-list',
-            template: "\n    <p *ngIf=\"uploadedFiles?.length\">{{placeholder}}</p>\n    <div>\n      <div *ngFor=\"let file of uploadedFiles\">\n        <div class=\"full-width flex-h justify-between\">\n          <div class=\"flex-h has-ellipsis\">\n            <mat-icon *ngIf=\"!disabled && isDone(file)\">done</mat-icon>\n            <a class=\"flex-h has-ellipsis\" [href]=\"file.id\" target=\"_blank\">\n              <img class=\"file-icon smart-rotate\" image [src]=\"file['fileicon']\" />\n              <span class=\"has-ellipsis\">{{ file.value.name }}</span>\n              <mat-icon class=\"i-open\">open_in_new</mat-icon>\n            </a>\n          </div>\n          <div class=\"flex-h\">\n            <div class=\"flex-h\" *ngIf=\"file['imageurl'] as imageurl\">\n              <div\n                class=\"full-width\"\n                *ngIf=\"!img.hasLoaded && !img.hasError\"\n              >\n                <div class=\"margin10\">\n                  <mat-progress-spinner [diameter]=\"30\" mode=\"indeterminate\">\n                  </mat-progress-spinner>\n                </div>\n              </div>\n              <img\n                #img\n                class=\"file-thumb has-pointer smart-rotate\"\n                matTooltip=\"Click to preview image\"\n                (click)=\"clickedImage(imageurl)\"\n                [src]=\"imageurl\"\n                [hidden]=\"!img.hasLoaded && !img.hasError\"\n                (load)=\"img.hasLoaded = true\"\n                (error)=\"img.hasError = true\"\n              />\n            </div>\n            <mat-icon\n              *ngIf=\"!disabled\"\n              class=\"has-pointer\"\n              (click)=\"this.clickRemoveTag.emit(file)\"\n              >cancel</mat-icon\n            >\n          </div>\n        </div>\n        <div class=\"full-width\">\n          <mat-progress-bar\n            class=\"progress\"\n            mode=\"determinate\"\n            [value]=\"getProgress(file)\"\n          ></mat-progress-bar>\n        </div>\n      </div>\n    </div>\n  ",
+            template: "\n    <p *ngIf=\"uploadedFiles?.length\">{{placeholder}}</p>\n    <div>\n      <div *ngFor=\"let file of uploadedFiles\">\n        <div class=\"full-width flex-h justify-between\">\n          <div class=\"flex-h has-ellipsis\">\n            <mat-icon *ngIf=\"!disabled && isDone(file)\">done</mat-icon>\n            <a class=\"flex-h has-ellipsis\" [href]=\"file.id\" target=\"_blank\">\n              <img class=\"file-icon smart-rotate\" image [src]=\"file['fileicon']\" />\n              <span class=\"has-ellipsis\">{{ file.value.name }}</span>\n              <mat-icon class=\"i-open\">open_in_new</mat-icon>\n            </a>\n            <mat-icon\n            class=\"has-pointer\"\n            *ngIf=\"canEdit\"\n            (click)=\"editFileName(file)\"\n            >edit</mat-icon>\n          </div>\n          <div class=\"flex-h\">\n            <div class=\"flex-h\" *ngIf=\"file['imageurl'] as imageurl\">\n              <div\n                class=\"full-width\"\n                *ngIf=\"!img.hasLoaded && !img.hasError\"\n              >\n                <div class=\"margin10\">\n                  <mat-progress-spinner [diameter]=\"30\" mode=\"indeterminate\">\n                  </mat-progress-spinner>\n                </div>\n              </div>\n              <img\n                #img\n                class=\"file-thumb has-pointer smart-rotate\"\n                matTooltip=\"Click to preview image\"\n                (click)=\"clickedImage(imageurl)\"\n                [src]=\"imageurl\"\n                [hidden]=\"!img.hasLoaded && !img.hasError\"\n                (load)=\"img.hasLoaded = true\"\n                (error)=\"img.hasError = true\"\n              />\n            </div>\n            <mat-icon\n              *ngIf=\"!disabled\"\n              class=\"has-pointer\"\n              (click)=\"this.clickRemoveTag.emit(file)\"\n              >cancel</mat-icon\n            >\n          </div>\n        </div>\n        <div class=\"full-width\">\n          <mat-progress-bar\n            class=\"progress\"\n            mode=\"determinate\"\n            [value]=\"getProgress(file)\"\n          ></mat-progress-bar>\n        </div>\n      </div>\n    </div>\n  ",
             styles: ["\n      .smart-rotate {\n        image-orientation: from-image;\n      }\n      .full-width {\n        width: 100%;\n      }\n      .flex-h {\n        display: flex;\n        flex-direction: row;\n        align-items: center;\n      }\n      .justify-between {\n        justify-content: space-between;\n      }\n      .has-pointer {\n        cursor: pointer;\n      }\n      .file-link {\n        display: flex;\n        align-items: center;\n      }\n      .file-thumb,\n      .file-icon {\n        margin: 3px;\n        height: 30px;\n        width: auto;\n        max-width: 60px;\n      }\n      .file-thumb {\n        background-color: #ddd;\n      }\n      .i-open {\n        font-size: 1em;\n      }\n      .has-ellipsis {\n        text-overflow: ellipsis;\n        overflow: hidden;\n        white-space: nowrap;\n      }\n    "]
         }),
         __metadata("design:paramtypes", [_angular_material_dialog__WEBPACK_IMPORTED_MODULE_1__["MatDialog"]])
@@ -1769,6 +1837,144 @@ var LibPreviewImagesModule = /** @class */ (function () {
         })
     ], LibPreviewImagesModule);
     return LibPreviewImagesModule;
+}());
+
+
+
+/***/ }),
+
+/***/ "../mat-firebase-upload/src/lib/subcomponents/rename-image/components/rename-image-popup.component.ts":
+/*!************************************************************************************************************!*\
+  !*** ../mat-firebase-upload/src/lib/subcomponents/rename-image/components/rename-image-popup.component.ts ***!
+  \************************************************************************************************************/
+/*! exports provided: RenameImagePopupComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RenameImagePopupComponent", function() { return RenameImagePopupComponent; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "../../node_modules/@angular/core/fesm2015/core.js");
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/forms */ "../../node_modules/@angular/forms/fesm2015/forms.js");
+/* harmony import */ var _angular_material_dialog__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/material/dialog */ "../../node_modules/@angular/material/fesm2015/dialog.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (undefined && undefined.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+
+var RenameImagePopupComponent = /** @class */ (function () {
+    function RenameImagePopupComponent(dialogRef, currentFileName) {
+        this.dialogRef = dialogRef;
+        this.currentFileName = currentFileName;
+    }
+    RenameImagePopupComponent.prototype.ngOnInit = function () {
+        this.renameFileForm = new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormGroup"]({
+            oldFileName: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"](""),
+            newFileName: new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"]("", [
+                _angular_forms__WEBPACK_IMPORTED_MODULE_1__["Validators"].required,
+                this.noWhitespaceValidator,
+            ]),
+        });
+        this.renameFileForm.controls["oldFileName"].disable();
+        this.renameFileForm.get("oldFileName").patchValue(this.currentFileName);
+    };
+    RenameImagePopupComponent.prototype.onCancel = function () {
+        this.dialogRef.close();
+    };
+    RenameImagePopupComponent.prototype.onSubmit = function () {
+        if (!this.renameFileForm.valid) {
+            console.log("not form valid");
+            return;
+        }
+        this.dialogRef.close(this.renameFileForm.value["newFileName"]);
+    };
+    //no whitespace validator for the new file name
+    RenameImagePopupComponent.prototype.noWhitespaceValidator = function (control) {
+        var isWhitespace = (control.value || "").trim().length === 0;
+        var isValidEntry = !isWhitespace;
+        return isValidEntry ? null : { whitespace: true };
+    };
+    RenameImagePopupComponent.prototype.isValid = function () {
+        if (this.renameFileForm.get("newFileName").invalid ||
+            this.renameFileForm.get("newFileName").hasError("whitespace")) {
+            return false;
+        }
+        return true;
+    };
+    RenameImagePopupComponent.ctorParameters = function () { return [
+        { type: _angular_material_dialog__WEBPACK_IMPORTED_MODULE_2__["MatDialogRef"] },
+        { type: String, decorators: [{ type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Inject"], args: [_angular_material_dialog__WEBPACK_IMPORTED_MODULE_2__["MAT_DIALOG_DATA"],] }] }
+    ]; };
+    RenameImagePopupComponent = __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
+            selector: "preview-rename-image-popup",
+            template: "\n    <form [formGroup]=\"renameFileForm\">\n      <h2>Update the File Name</h2>\n      <div>\n        <mat-form-field appearance=\"fill\">\n          <mat-label>Old Name</mat-label>\n          <input formControlName=\"oldFileName\" matInput />\n        </mat-form-field>\n      </div>\n      <mat-form-field appearance=\"fill\">\n        <mat-label>New Name</mat-label>\n        <input formControlName=\"newFileName\" matInput />\n        <mat-error *ngIf=\"!isValid()\">Enter a Valid File Name</mat-error>\n      </mat-form-field>\n      <div>\n        <button\n          mat-flat-button\n          color=\"warn\"\n          (click)=\"onCancel()\"\n          style=\"margin-right:30px\"\n        >\n          Cancel\n        </button>\n        <button\n          mat-flat-button\n          color=\"primary\"\n          [disabled]=\"!isValid()\"\n          style=\"margin-left:30px\"\n          (click)=\"onSubmit()\"\n        >\n          Save\n        </button>\n      </div>\n    </form>\n  ",
+        }),
+        __metadata("design:paramtypes", [_angular_material_dialog__WEBPACK_IMPORTED_MODULE_2__["MatDialogRef"], String])
+    ], RenameImagePopupComponent);
+    return RenameImagePopupComponent;
+}());
+
+
+
+/***/ }),
+
+/***/ "../mat-firebase-upload/src/lib/subcomponents/rename-image/lib-rename-image.module.ts":
+/*!********************************************************************************************!*\
+  !*** ../mat-firebase-upload/src/lib/subcomponents/rename-image/lib-rename-image.module.ts ***!
+  \********************************************************************************************/
+/*! exports provided: LibRenameImagesModule */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LibRenameImagesModule", function() { return LibRenameImagesModule; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "../../node_modules/@angular/core/fesm2015/core.js");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/common */ "../../node_modules/@angular/common/fesm2015/common.js");
+/* harmony import */ var _material_imports__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../material-imports */ "../mat-firebase-upload/src/material-imports.ts");
+/* harmony import */ var _components_rename_image_popup_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/rename-image-popup.component */ "../mat-firebase-upload/src/lib/subcomponents/rename-image/components/rename-image-popup.component.ts");
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/forms */ "../../node_modules/@angular/forms/fesm2015/forms.js");
+/* harmony import */ var _angular_material_form_field__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/material/form-field */ "../../node_modules/@angular/material/fesm2015/form-field.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
+
+
+
+
+
+var LibRenameImagesModule = /** @class */ (function () {
+    function LibRenameImagesModule() {
+    }
+    LibRenameImagesModule = __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["NgModule"])({
+            entryComponents: [_components_rename_image_popup_component__WEBPACK_IMPORTED_MODULE_3__["RenameImagePopupComponent"]],
+            declarations: [_components_rename_image_popup_component__WEBPACK_IMPORTED_MODULE_3__["RenameImagePopupComponent"]],
+            exports: [_components_rename_image_popup_component__WEBPACK_IMPORTED_MODULE_3__["RenameImagePopupComponent"]],
+            imports: [
+                _angular_common__WEBPACK_IMPORTED_MODULE_1__["CommonModule"],
+                _material_imports__WEBPACK_IMPORTED_MODULE_2__["MatDialogModule"],
+                _material_imports__WEBPACK_IMPORTED_MODULE_2__["MatButtonModule"],
+                _material_imports__WEBPACK_IMPORTED_MODULE_2__["MatProgressSpinnerModule"],
+                _material_imports__WEBPACK_IMPORTED_MODULE_2__["MatIconModule"],
+                _angular_forms__WEBPACK_IMPORTED_MODULE_4__["FormsModule"],
+                _angular_forms__WEBPACK_IMPORTED_MODULE_4__["ReactiveFormsModule"],
+                _angular_material_form_field__WEBPACK_IMPORTED_MODULE_5__["MatFormFieldModule"],
+                _material_imports__WEBPACK_IMPORTED_MODULE_2__["MatInputModule"]
+            ]
+        })
+    ], LibRenameImagesModule);
+    return LibRenameImagesModule;
 }());
 
 
@@ -2824,6 +3030,7 @@ var TestFormFileComponent = /** @class */ (function () {
                         return [4 /*yield*/, Object(_file_factory__WEBPACK_IMPORTED_MODULE_1__["makeConfig"])(3000)];
                     case 2:
                         _a.config = _b.sent();
+                        this.config.canEditFileNames = true;
                         return [2 /*return*/];
                 }
             });
@@ -2925,16 +3132,17 @@ var TestFormFilesComponent = /** @class */ (function () {
     }
     TestFormFilesComponent.prototype.ngOnInit = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var config;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0: return [4 /*yield*/, Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["delay"])(1000)];
                     case 1:
-                        _b.sent();
-                        _a = this;
+                        _a.sent();
                         return [4 /*yield*/, Object(_file_factory__WEBPACK_IMPORTED_MODULE_1__["makeConfig"])(2000)];
                     case 2:
-                        _a.config = _b.sent();
+                        config = _a.sent();
+                        config.canEditFileNames = true;
+                        this.config = config;
                         return [2 /*return*/];
                 }
             });
